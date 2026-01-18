@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Le Jeu des 3 Étapes</title>
+  <style>
+    :root{
+      --bg: #0b0f19;
+      --card: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --bad: #ff3b30;
+      --good:#34c759;
+      --accent:#7c5cff;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      background: radial-gradient(1200px 700px at 10% 10%, rgba(124,92,255,.25), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 30%, rgba(52,199,89,.18), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+    }
+    .wrap{ width:min(860px,100%); }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      overflow:hidden;
+    }
+    .top{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:16px; margin-bottom:14px;
+    }
+    h1{ margin:0; font-size:22px; letter-spacing:.2px; }
+    .badge{
+      display:inline-flex; gap:10px; align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: 13px;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(124,92,255,.12);
+    }
+
+    .progress{
+      margin-top: 6px;
+      display:flex; gap:10px; align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .bar{
+      flex:1;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(124,92,255,.85), rgba(52,199,89,.85));
+      transition: width .25s ease;
+    }
+
+    .question{
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+    }
+    .qtitle{ margin:0 0 10px 0; font-size:18px; }
+    .qtext{
+      margin:0 0 14px 0;
+      color: var(--muted);
+      line-height: 1.55;
+      white-space:pre-line;
+    }
+
+    .options{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .opt{
+      display:flex; align-items:flex-start; gap:12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+    }
+    .opt:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.06);
+    }
+    .opt input{ margin-top: 2px; }
+    .opt.good{
+      border-color: rgba(52,199,89,.65);
+      background: rgba(52,199,89,.10);
+    }
+    .opt.bad{
+      border-color: rgba(255,59,48,.65);
+      background: rgba(255,59,48,.10);
+    }
+
+    .feedback{
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      display:none;
+    }
+    .feedback.show{ display:block; }
+    .feedback.good{ border-color: rgba(52,199,89,.65); }
+    .feedback.bad{ border-color: rgba(255,59,48,.65); }
+
+    .actions{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 16px;
+    }
+    button{
+      appearance:none;
+      border:none;
+      border-radius: 14px;
+      padding: 11px 14px;
+      cursor:pointer;
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--stroke);
+      transition: transform .08s ease, background .15s ease, opacity .15s ease;
+    }
+    button:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
+    button:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .primary{
+      background: rgba(124,92,255,.22);
+      border-color: rgba(124,92,255,.55);
+    }
+    .primary:hover{ background: rgba(124,92,255,.28); }
+    .danger{
+      background: rgba(255,59,48,.14);
+      border-color: rgba(255,59,48,.35);
+    }
+
+    .final{
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(52,199,89,.55);
+      background: rgba(52,199,89,.10);
+      display:none;
+    }
+    .final.show{ display:block; }
+    .final p{
+      margin: 0;
+      color: rgba(255,255,255,.85);
+      line-height: 1.6;
+      white-space:pre-line;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <h1>Le Jeu des 3 Étapes</h1>
+        <div class="badge">
+          <span class="dot" id="dot"></span>
+          <span id="stageLabel">Question 1 sur 3</span>
+        </div>
+      </div>
+
+      <div class="progress">
+        <span>Progression</span>
+        <div class="bar"><div class="fill" id="fill"></div></div>
+      </div>
+
+      <section class="question" id="questionBox">
+        <h2 class="qtitle" id="qTitle">Question 1</h2>
+        <p class="qtext" id="qText"></p>
+
+        <div class="options" id="options"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <div class="actions">
+          <button class="primary" id="continueBtn" disabled>Continuer</button>
+          <button id="retryBtn" class="danger">Réessayer</button>
+          <button id="resetBtn">Recommencer</button>
+        </div>
+      </section>
+
+      <section class="final" id="finalBox">
+        <p id="finalText">Fin du jeu.</p>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // 3 questions, avec la bonne réponse explicitement comme "Réponse"
+    // + progression + verrouillage tant que pas bon
+    const QUESTIONS = [
+      {
+        title: "Question 1",
+
+        choices: ["Un miroir", "Une ombre", "Le vent", "Un reflet"],
+        correctIndex: 1,
+        badMsg: "Mauvaise réponse.",
+        goodMsg: "Bonne réponse. Réponse : Une ombre."
+      },
+      {
+        title: "Question 2",
+        choices: [ "Ton téléphone", "Ton sac", "Ton prénom", "Ta chambre"],
+        correctIndex: 2,
+        badMsg: "Mauvaise réponse.",
+        goodMsg: "Bonne réponse. Réponse : Ton prénom."
+      },
+      {
+        title: "Question 3",
+        choices: [ "Un perroquet", "Un écho", "Un téléphone", "Un fantôme"],
+        correctIndex: 1,
+        badMsg: "Mauvaise réponse.",
+        goodMsg: "Bonne réponse. Réponse : Un écho."
+      }
+    ];
+
+    let step = 0;
+    let unlocked = false;
+    let answeredCorrect = false;
+
+    const qTitle = document.getElementById("qTitle");
+    const qText = document.getElementById("qText");
+    const options = document.getElementById("options");
+    const feedback = document.getElementById("feedback");
+    const continueBtn = document.getElementById("continueBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const stageLabel = document.getElementById("stageLabel");
+    const fill = document.getElementById("fill");
+    const dot = document.getElementById("dot");
+    const questionBox = document.getElementById("questionBox");
+    const finalBox = document.getElementById("finalBox");
+
+    function setDotColor(kind) {
+      if (kind === "good") dot.style.background = "var(--good)";
+      else if (kind === "bad") dot.style.background = "var(--bad)";
+      else dot.style.background = "var(--accent)";
+    }
+
+    function setProgress() {
+      const total = QUESTIONS.length;
+      stageLabel.textContent = `Question ${Math.min(step+1, total)} sur ${total}`;
+      fill.style.width = Math.round((step / total) * 100) + "%";
+    }
+
+    function showFeedback(kind, msg) {
+      feedback.className = "feedback show " + kind;
+      feedback.textContent = msg;
+      setDotColor(kind);
+    }
+
+    function clearFeedback() {
+      feedback.className = "feedback";
+      feedback.textContent = "";
+      setDotColor("accent");
+    }
+
+    function lockOptions() {
+      const radios = options.querySelectorAll('input[type="radio"]');
+      radios.forEach(r => r.disabled = true);
+      const labels = options.querySelectorAll(".opt");
+      labels.forEach(l => l.style.cursor = "default");
+    }
+
+    function resetOptionsStyles() {
+      const labels = options.querySelectorAll(".opt");
+      labels.forEach(l => l.classList.remove("good", "bad"));
+
+      const radios = options.querySelectorAll('input[type="radio"]');
+      radios.forEach(r => {
+        r.checked = false;
+        r.disabled = false;
+      });
+
+      labels.forEach(l => l.style.cursor = "pointer");
+    }
+
+    function renderQuestion() {
+      answeredCorrect = false;
+      unlocked = false;
+      continueBtn.disabled = true;
+      clearFeedback();
+
+      finalBox.classList.remove("show");
+      questionBox.style.display = "block";
+
+      const q = QUESTIONS[step];
+      qTitle.textContent = q.title;
+      qText.textContent = q.text;
+
+      options.innerHTML = "";
+      q.choices.forEach((label, idx) => {
+        const row = document.createElement("label");
+        row.className = "opt";
+        row.innerHTML = `
+          <input type="radio" name="choice" value="${idx}" />
+          <div>${label}</div>
+        `;
+        row.addEventListener("click", () => onPick(idx, row));
+        options.appendChild(row);
+      });
+
+      setProgress();
+    }
+
+    function onPick(idx, rowEl) {
+      if (answeredCorrect) return;
+
+      const q = QUESTIONS[step];
+
+      // reset styles
+      const labels = options.querySelectorAll(".opt");
+      labels.forEach(l => l.classList.remove("good", "bad"));
+
+      if (idx === q.correctIndex) {
+        rowEl.classList.add("good");
+        showFeedback("good", q.goodMsg);
+
+        unlocked = true;
+        answeredCorrect = true;
+        continueBtn.disabled = false;
+
+        lockOptions();
+        fill.style.width = Math.round(((step + 1) / QUESTIONS.length) * 100) + "%";
+      } else {
+        rowEl.classList.add("bad");
+        showFeedback("bad", q.badMsg);
+        unlocked = false;
+        continueBtn.disabled = true;
+      }
+    }
+
+    continueBtn.addEventListener("click", () => {
+      if (!unlocked) return;
+
+      step++;
+      if (step >= QUESTIONS.length) {
+        questionBox.style.display = "none";
+        finalBox.classList.add("show");
+        stageLabel.textContent = "Terminé";
+        fill.style.width = "100%";
+        setDotColor("good");
+        return;
+      }
+      renderQuestion();
+    });
+
+    retryBtn.addEventListener("click", () => {
+      answeredCorrect = false;
+      unlocked = false;
+      continueBtn.disabled = true;
+      clearFeedback();
+      resetOptionsStyles();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      step = 0;
+      renderQuestion();
+    });
+
+    // Init
+    renderQuestion();
+  </script>
+</body>
+</html>
