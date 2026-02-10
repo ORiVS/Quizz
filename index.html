@@ -3,395 +3,1914 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Le Jeu des 3 Étapes</title>
+  <title>Valentine — Un seul instant</title>
+  <meta name="theme-color" content="#ff4d6d" />
   <style>
     :root{
-      --bg: #0b0f19;
-      --card: rgba(255,255,255,.06);
-      --stroke: rgba(255,255,255,.12);
-      --text: rgba(255,255,255,.92);
+      --bg1:#120013;
+      --bg2:#2a001b;
+      --card: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --ink: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
-      --bad: #ff3b30;
+      --hot: #ff4d6d;
+      --hot2:#ff8fab;
+      --gold:#ffd1dc;
       --good:#34c759;
-      --accent:#7c5cff;
-      --shadow: 0 18px 60px rgba(0,0,0,.55);
-      --radius: 18px;
+      --bad:#ff3b30;
+      --shadow: 0 22px 80px rgba(0,0,0,.65);
+      --radius: 26px;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; min-height:100vh;
-      background: radial-gradient(1200px 700px at 10% 10%, rgba(124,92,255,.25), transparent 60%),
-                  radial-gradient(1000px 600px at 90% 30%, rgba(52,199,89,.18), transparent 60%),
-                  var(--bg);
-      color:var(--text);
+      margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      display:flex; align-items:center; justify-content:center;
-      padding:24px;
+      color:var(--ink);
+      background: radial-gradient(1200px 760px at 15% 18%, rgba(255,77,109,.25), transparent 55%),
+                  radial-gradient(1000px 700px at 85% 22%, rgba(255,143,171,.18), transparent 60%),
+                  radial-gradient(1100px 780px at 55% 92%, rgba(255,255,255,.06), transparent 60%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+      -webkit-tap-highlight-color: transparent;
     }
-    .wrap{ width:min(860px,100%); }
+
+    /* Soft animated glow */
+    .glow{
+      position:fixed; inset:-40px;
+      background:
+        radial-gradient(520px 360px at 25% 30%, rgba(255,77,109,.22), transparent 65%),
+        radial-gradient(620px 420px at 80% 35%, rgba(255,143,171,.18), transparent 65%),
+        radial-gradient(520px 380px at 50% 85%, rgba(255,255,255,.05), transparent 70%);
+      filter: blur(12px);
+      opacity:.95;
+      animation: drift 8.5s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes drift{
+      0%,100%{ transform: translate(0,0) scale(1.02); }
+      50%{ transform: translate(-10px,8px) scale(1.05); }
+    }
+
+    /* Film grain */
+    .grain{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.10;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+      animation: grainMove 2.8s steps(2) infinite;
+    }
+    @keyframes grainMove{
+      0%{ transform: translate(0,0); }
+      25%{ transform: translate(-6px,4px); }
+      50%{ transform: translate(4px,-5px); }
+      75%{ transform: translate(-3px,-4px); }
+      100%{ transform: translate(0,0); }
+    }
+
+    .fadeLayer{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.82);
+      opacity: 1;
+      pointer-events:none;
+      transition: opacity .75s ease;
+      z-index: 30;
+    }
+    .fadeLayer.hide{ opacity:0; }
+
+    .wrap{
+      position:relative;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:22px;
+      z-index: 5;
+    }
+
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      border: 1px solid var(--stroke);
+      width:min(980px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid var(--stroke);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 22px;
       overflow:hidden;
+      backdrop-filter: blur(12px);
     }
+
     .top{
-      display:flex; align-items:flex-start; justify-content:space-between;
-      gap:16px; margin-bottom:14px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      padding:18px 18px 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
     }
-    h1{ margin:0; font-size:22px; letter-spacing:.2px; }
+    .title{
+      display:flex; flex-direction:column; gap:8px;
+      min-width: 0;
+    }
+    .title h1{
+      margin:0;
+      font-size: 15px;
+      letter-spacing:.4px;
+      color: rgba(255,255,255,.78);
+      font-weight: 650;
+    }
+
     .badge{
       display:inline-flex; gap:10px; align-items:center;
       padding:8px 12px;
       border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.05);
-      color: var(--muted);
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.78);
       font-size: 13px;
       user-select:none;
       white-space:nowrap;
     }
     .dot{
       width:10px; height:10px; border-radius:999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 6px rgba(124,92,255,.12);
+      background: var(--hot);
+      box-shadow: 0 0 0 6px rgba(255,77,109,.14);
     }
 
-    .progress{
-      margin-top: 6px;
-      display:flex; gap:10px; align-items:center;
-      color: var(--muted);
-      font-size: 13px;
+    .clock{
+      font-variant-numeric: tabular-nums;
+      font-size: 28px;
+      letter-spacing: 1px;
+      font-weight: 750;
+      line-height: 1;
+      color: rgba(255,255,255,.95);
+      text-shadow: 0 10px 30px rgba(255,77,109,.12);
     }
-    .bar{
-      flex:1;
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid var(--stroke);
-      background: rgba(255,255,255,.04);
-      overflow:hidden;
+    .clock.soft{
+      animation: clockPulse 2.6s ease-in-out infinite;
     }
-    .fill{
-      height:100%;
-      width: 0%;
-      background: linear-gradient(90deg, rgba(124,92,255,.85), rgba(52,199,89,.85));
-      transition: width .25s ease;
+    @keyframes clockPulse{
+      0%,100%{ transform: scale(1.00); opacity: .96; }
+      50%{ transform: scale(1.03); opacity: 1; }
     }
+    .clock.frozen{ opacity:.85; }
 
-    .question{
-      margin-top: 18px;
+    main{
       padding: 18px;
-      border-radius: 16px;
-      border: 1px solid var(--stroke);
-      background: rgba(0,0,0,.18);
-    }
-    .qtitle{ margin:0 0 10px 0; font-size:18px; }
-    .qtext{
-      margin:0 0 14px 0;
-      color: var(--muted);
-      line-height: 1.55;
-      white-space:pre-line;
+      min-height: 430px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:16px;
     }
 
-    .options{
-      display:grid;
-      grid-template-columns: 1fr;
+    .lines{
+      display:flex;
+      flex-direction:column;
       gap:10px;
-      margin-top: 10px;
+      max-width: 760px;
     }
-    .opt{
-      display:flex; align-items:flex-start; gap:12px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.04);
-      cursor:pointer;
-      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+    .line{
+      margin:0;
+      font-size: 18px;
+      line-height: 1.6;
+      letter-spacing: .08px;
+      color: rgba(255,255,255,.90);
+      opacity:0;
+      transform: translateY(7px);
+      transition: opacity .55s ease, transform .55s ease;
+      white-space: pre-line;
     }
-    .opt:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.06);
+    .line.show{
+      opacity:1;
+      transform: translateY(0);
     }
-    .opt input{ margin-top: 2px; }
-    .opt.good{
-      border-color: rgba(52,199,89,.65);
-      background: rgba(52,199,89,.10);
-    }
-    .opt.bad{
-      border-color: rgba(255,59,48,.65);
-      background: rgba(255,59,48,.10);
+    .line.muted{
+      color: rgba(255,255,255,.68);
+      font-size: 16px;
     }
 
-    .feedback{
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.03);
-      display:none;
+    .subtle{
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+      margin-top: 6px;
     }
-    .feedback.show{ display:block; }
-    .feedback.good{ border-color: rgba(52,199,89,.65); }
-    .feedback.bad{ border-color: rgba(255,59,48,.65); }
 
     .actions{
-      display:flex; flex-wrap:wrap; gap:10px;
-      margin-top: 16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
     }
     button{
       appearance:none;
       border:none;
-      border-radius: 14px;
-      padding: 11px 14px;
-      cursor:pointer;
-      color: var(--text);
-      background: rgba(255,255,255,.08);
-      border: 1px solid var(--stroke);
-      transition: transform .08s ease, background .15s ease, opacity .15s ease;
-    }
-    button:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
-    button:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
-    .primary{
-      background: rgba(124,92,255,.22);
-      border-color: rgba(124,92,255,.55);
-    }
-    .primary:hover{ background: rgba(124,92,255,.28); }
-    .danger{
-      background: rgba(255,59,48,.14);
-      border-color: rgba(255,59,48,.35);
-    }
-
-    .final{
-      margin-top: 18px;
-      padding: 18px;
       border-radius: 16px;
-      border: 1px solid rgba(52,199,89,.55);
-      background: rgba(52,199,89,.10);
+      padding: 12px 14px;
+      cursor:pointer;
+      color: rgba(255,255,255,.94);
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.16);
+      transition: transform .10s ease, background .18s ease, border-color .18s ease;
+      user-select:none;
+      min-width: 160px;
+    }
+    button:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
+    button:active{ transform: translateY(0) scale(.99); }
+    button.primary{
+      background: rgba(255,77,109,.18);
+      border-color: rgba(255,77,109,.55);
+    }
+    button.primary:hover{ background: rgba(255,77,109,.24); }
+    button.soft{
+      background: rgba(255,143,171,.14);
+      border-color: rgba(255,143,171,.50);
+    }
+    button.soft:hover{ background: rgba(255,143,171,.20); }
+
+    /* Floating hearts mini action */
+    .heartsZone{
+      position:relative;
+      height: 160px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+      overflow:hidden;
       display:none;
     }
-    .final.show{ display:block; }
-    .final p{
-      margin: 0;
-      color: rgba(255,255,255,.85);
-      line-height: 1.6;
-      white-space:pre-line;
+    .heart{
+      position:absolute;
+      width: 56px; height:56px;
+      border-radius: 18px;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      user-select:none;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,77,109,.14);
+      box-shadow: 0 16px 40px rgba(255,77,109,.12);
+      transform: translate(-50%,-50%);
+      transition: transform .12s ease, opacity .2s ease;
+    }
+    .heart:active{ transform: translate(-50%,-50%) scale(.96); }
+    .heart span{
+      font-size: 22px;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
+    }
+    .heartsHint{
+      display:none;
+      color: rgba(255,255,255,.70);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    /* Drag heart into lock */
+    .dragZone{
+      display:none;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .draggable{
+      width: 84px; height:84px;
+      border-radius: 26px;
+      display:grid;
+      place-items:center;
+      background: rgba(255,77,109,.18);
+      border: 1px solid rgba(255,255,255,.18);
+      cursor: grab;
+      user-select:none;
+      box-shadow: 0 18px 46px rgba(255,77,109,.14);
+      touch-action: none;
+      position:relative;
+    }
+    .draggable:active{ cursor: grabbing; }
+    .draggable span{ font-size: 30px; }
+    .lockTarget{
+      width: 160px; height:84px;
+      border-radius: 26px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      background: rgba(0,0,0,.14);
+      border: 1px dashed rgba(255,255,255,.22);
+      color: rgba(255,255,255,.78);
+      user-select:none;
+    }
+    .lockTarget.hit{
+      border-color: rgba(255,77,109,.70);
+      background: rgba(255,77,109,.12);
+      box-shadow: 0 0 0 10px rgba(255,77,109,.08);
+    }
+
+    /* Hold-to-commit */
+    .holdWrap{
+      display:none;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-top: 6px;
+    }
+    .holdBtn{
+      position:relative;
+      width:min(420px, 100%);
+      height: 64px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.92);
+      font-size: 15px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      outline:none;
+      overflow:hidden;
+    }
+    .holdBtn.pulse{
+      animation: pulseRing 1.8s ease-in-out infinite;
+    }
+    @keyframes pulseRing{
+      0%{ box-shadow: 0 0 0 0 rgba(255,77,109,.00); }
+      50%{ box-shadow: 0 0 0 12px rgba(255,77,109,.10); }
+      100%{ box-shadow: 0 0 0 0 rgba(255,77,109,.00); }
+    }
+    .ring{
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.12);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+    .ring svg{ width: 52px; height:52px; }
+    .hint{
+      display:none;
+      color: rgba(255,255,255,.70);
+      font-size: 13px;
+    }
+    .hint.show{ display:block; }
+
+    /* Ending hearts rain */
+    .rain{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      display:none;
+      z-index: 40;
+    }
+    .rain.show{ display:block; }
+    .drop{
+      position:absolute;
+      top:-60px;
+      font-size: 18px;
+      opacity:.9;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.25));
+      animation: fall linear forwards;
+    }
+    @keyframes fall{
+      to { transform: translateY(calc(100vh + 120px)); opacity: 0.95; }
+    }
+
+    .footer{
+      padding: 14px 18px 18px 18px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.60);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      background: rgba(0,0,0,.10);
+    }
+    .pill{
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.72);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .glow{ animation:none; }
+      .grain{ animation:none; }
+      .line{ transition:none; }
+      button{ transition:none; }
+      .clock.soft{ animation:none; }
     }
   </style>
 </head>
 
 <body>
+  <div class="glow"></div>
+  <div class="grain" id="grain"></div>
+  <div class="fadeLayer" id="fade"></div>
+
+  <div class="rain" id="rain"></div>
+
   <div class="wrap">
     <div class="card">
       <div class="top">
-        <h1>Le Jeu des 3 Étapes</h1>
+        <div class="title">
+          <h1 id="headerTitle">Saint-Valentin</h1>
+          <div class="clock soft" id="clock">--:--:--</div>
+        </div>
         <div class="badge">
           <span class="dot" id="dot"></span>
-          <span id="stageLabel">Question 1 sur 3</span>
+          <span id="badgeText">BOOT</span>
         </div>
       </div>
 
-      <div class="progress">
-        <span>Progression</span>
-        <div class="bar"><div class="fill" id="fill"></div></div>
-      </div>
+      <main>
+        <section class="lines" id="lines"></section>
 
-      <section class="question" id="questionBox">
-        <h2 class="qtitle" id="qTitle">Question 1</h2>
-        <p class="qtext" id="qText"></p>
+        <div class="actions" id="choiceActions" style="display:none;"></div>
 
-        <div class="options" id="options"></div>
+        <div class="heartsZone" id="heartsZone"></div>
+        <div class="heartsHint" id="heartsHint">Attrape 3 cœurs pour continuer.</div>
 
-        <div class="feedback" id="feedback"></div>
-
-        <div class="actions">
-          <button class="primary" id="continueBtn" disabled>Continuer</button>
-          <button id="retryBtn" class="danger">Réessayer</button>
-          <button id="resetBtn">Recommencer</button>
+        <div class="dragZone" id="dragZone">
+          <div class="draggable" id="dragHeart" aria-label="Cœur à déplacer"><span>❤</span></div>
+          <div class="lockTarget" id="lockTarget" aria-label="Cadenas">
+            <span style="font-size:18px;">🔒</span>
+            <span>Glisse le cœur ici</span>
+          </div>
         </div>
-      </section>
 
-      <section class="final" id="finalBox">
-        <p id="finalText">Fin du jeu.</p>
-      </section>
+        <div class="holdWrap" id="holdWrap">
+          <button class="holdBtn pulse" id="holdBtn" type="button">Maintiens ton doigt ici</button>
+          <div class="ring" aria-hidden="true">
+            <svg viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="48" stroke="rgba(255,255,255,.16)" stroke-width="10" fill="none"></circle>
+              <circle id="ringProg" cx="60" cy="60" r="48" stroke="rgba(255,77,109,.95)" stroke-width="10" fill="none"
+                stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
+            </svg>
+          </div>
+          <div class="hint" id="holdHint">Prends ton temps.</div>
+        </div>
+      </main>
+
+      <div class="footer">
+        <span id="footLeft">Toucher l’écran pour démarrer (audio).</span>
+        <span class="pill" id="footRight">Ambiance Valentine</span>
+      </div>
     </div>
   </div>
 
   <script>
-    // 3 questions, avec la bonne réponse explicitement comme "Réponse"
-    // + progression + verrouillage tant que pas bon
-    const QUESTIONS = [
-      {
-        title: "Question 1",
+    /*****************************************************************
+     * VALENTINE IMMERSIVE — 1 FILE
+     * - Valentine theme UI
+     * - Continuous background music (WebAudio), unlock on first gesture
+     * - Decisions + mini actions (hearts tap + drag + hold)
+     * - FSM + Timeline scheduler
+     * - Vibration + iOS fallback
+     * - Anti-replay (localStorage + optional sid)
+     *****************************************************************/
 
-        choices: ["Un miroir", "Une ombre", "Le vent", "Un reflet"],
-        correctIndex: 1,
-        badMsg: "Mauvaise réponse.",
-        goodMsg: "Bonne réponse. Réponse : Une ombre."
-      },
-      {
-        title: "Question 2",
-        choices: [ "Ton téléphone", "Ton sac", "Ton prénom", "Ta chambre"],
-        correctIndex: 2,
-        badMsg: "Mauvaise réponse.",
-        goodMsg: "Bonne réponse. Réponse : Ton prénom."
-      },
-      {
-        title: "Question 3",
-        choices: [ "Un perroquet", "Un écho", "Un téléphone", "Un fantôme"],
-        correctIndex: 1,
-        badMsg: "Mauvaise réponse.",
-        goodMsg: "Bonne réponse. Réponse : Un écho."
-      }
-    ];
+    /********************
+     * CONFIG
+     ********************/
+    const HOLD_DURATION_MS = 5500;
 
-    let step = 0;
-    let unlocked = false;
-    let answeredCorrect = false;
+    const urlParams = new URLSearchParams(location.search);
+    const SESSION_ID = urlParams.get("sid"); // optional
+    const STORAGE_KEY_DONE = "valentine_done";
+    const STORAGE_KEY_TIME = "valentine_time";
+    const STORAGE_KEY_SID_USED_PREFIX = "valentine_sid_used_";
 
-    const qTitle = document.getElementById("qTitle");
-    const qText = document.getElementById("qText");
-    const options = document.getElementById("options");
-    const feedback = document.getElementById("feedback");
-    const continueBtn = document.getElementById("continueBtn");
-    const retryBtn = document.getElementById("retryBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const stageLabel = document.getElementById("stageLabel");
-    const fill = document.getElementById("fill");
+    const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const supportsVibrate = "vibrate" in navigator;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    // Branch flags (decisions)
+    const Branch = {
+      openingChoice: null, // "now" | "later"
+      moodChoice: null     // "thrill" | "soft"
+    };
+
+    // Script blocks (you can edit freely)
+    const SCRIPT = {
+      BOOT: [
+        { atMs: 200,  t: "Toucher l’écran." },
+        { atMs: 1200, t: "Juste une fois." },
+        { atMs: 2400, t: "Et tout commence." },
+      ],
+      CLOCK: [
+        { atMs: 700,  t: "Il est exactement {TIME}." },
+        { atMs: 5200, t: "Ce moment est réel." },
+        { atMs: 9200, t: "Avant d’aller plus loin…" },
+        { atMs: 12400, t: "Tu veux ouvrir ça maintenant, ou plus tard ?" },
+      ],
+      AFTER_NOW: [
+        { atMs: 800,  t: "Ok." },
+        { atMs: 3200, t: "Alors on le vit maintenant." },
+        { atMs: 7000, t: "Sans recul. Sans filtre." },
+      ],
+      AFTER_LATER: [
+        { atMs: 800,  t: "Je comprends." },
+        { atMs: 3400, t: "Mais on est déjà ici." },
+        { atMs: 7600, t: "Alors… autant le vivre pleinement." },
+      ],
+      HEARTS_ACTION: [
+        { atMs: 500,  t: "Attrape 3 cœurs." },
+        { atMs: 3400, t: "Pas pour jouer." },
+        { atMs: 6200, t: "Pour prouver que tu es vraiment là." },
+      ],
+      MOOD_CHOICE: [
+        { atMs: 800,  t: "Maintenant, choisis le mood." },
+        { atMs: 4200, t: "Tu veux…" },
+      ],
+      THRILL_PATH: [
+        { atMs: 700,  t: "Ok. On prend le frisson." },
+        { atMs: 4200, t: "Le genre de frisson qui fait battre le cœur un peu trop vite." },
+        { atMs: 9800, t: "Et qui rend la suite… plus intense." },
+      ],
+      SOFT_PATH: [
+        { atMs: 700,  t: "Ok. On prend la douceur." },
+        { atMs: 4200, t: "Le genre de douceur qui calme tout, même quand la vie est bruyante." },
+        { atMs: 9800, t: "Et qui rend la suite… plus vraie." },
+      ],
+      DRAG_ACTION: [
+        { atMs: 600,  t: "Glisse le cœur dans le cadenas." },
+        { atMs: 4200, t: "Quand tu l’auras fait… tu comprendras." },
+      ],
+      HOLD_GATE: [
+        { atMs: 700,  t: "Dernière étape." },
+        { atMs: 4200, t: "Maintiens ton doigt ici." },
+        { atMs: 7800, t: "Ce moment n’existera qu’une seule fois." },
+      ],
+      TRUTH: [
+        { atMs: 700,  t: "Je vais être simple." },
+        { atMs: 4200, t: "J’aime passer du temps avec toi." },
+        { atMs: 9000, t: "J’aime ce que tu dégages. Et la façon dont tu vois la vie." },
+        { atMs: 14200, t: "Je me vois avancer avec toi." },
+        { atMs: 18600, t: "Construire quelque chose. Voyager. Créer des souvenirs." },
+        { atMs: 24200, t: "Alors je vais te demander un truc, clairement." },
+      ],
+      QUESTION: [
+        { atMs: 800, t: "Est-ce que tu veux être ma Valentine ?" },
+        { atMs: 5200, t: "Choisis avec ton cœur." },
+      ],
+      ENDING: [
+        { atMs: 900,  t: "Fin du jeu." },
+        { atMs: 4200, t: "Ce choix a été fait à {STAMP}." },
+        { atMs: 8600, t: "Souviens-toi de cet instant." },
+      ],
+    };
+
+    /********************
+     * DOM
+     ********************/
+    const fade = document.getElementById("fade");
+    const grain = document.getElementById("grain");
+    const clockEl = document.getElementById("clock");
+    const badgeText = document.getElementById("badgeText");
     const dot = document.getElementById("dot");
-    const questionBox = document.getElementById("questionBox");
-    const finalBox = document.getElementById("finalBox");
+    const lines = document.getElementById("lines");
 
-    function setDotColor(kind) {
+    const choiceActions = document.getElementById("choiceActions");
+
+    const heartsZone = document.getElementById("heartsZone");
+    const heartsHint = document.getElementById("heartsHint");
+
+    const dragZone = document.getElementById("dragZone");
+    const dragHeart = document.getElementById("dragHeart");
+    const lockTarget = document.getElementById("lockTarget");
+
+    const holdWrap = document.getElementById("holdWrap");
+    const holdBtn = document.getElementById("holdBtn");
+    const holdHint = document.getElementById("holdHint");
+    const ringProg = document.getElementById("ringProg");
+
+    const rain = document.getElementById("rain");
+
+    const footLeft = document.getElementById("footLeft");
+    const footRight = document.getElementById("footRight");
+
+    /********************
+     * UTIL
+     ********************/
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function formatTime(d=new Date()){
+      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+    }
+    function formatStamp(d=new Date()){
+      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+    function setDot(kind){
       if (kind === "good") dot.style.background = "var(--good)";
       else if (kind === "bad") dot.style.background = "var(--bad)";
-      else dot.style.background = "var(--accent)";
+      else dot.style.background = "var(--hot)";
+    }
+    function clearLines(){ lines.innerHTML = ""; }
+    function addLine(text, muted=false){
+      const p = document.createElement("p");
+      p.className = "line" + (muted ? " muted" : "");
+      p.textContent = text;
+      lines.appendChild(p);
+      requestAnimationFrame(()=>p.classList.add("show"));
     }
 
-    function setProgress() {
-      const total = QUESTIONS.length;
-      stageLabel.textContent = `Question ${Math.min(step+1, total)} sur ${total}`;
-      fill.style.width = Math.round((step / total) * 100) + "%";
+    function vib(pattern){
+      if (!supportsVibrate) return false;
+      try{ navigator.vibrate(pattern); return true; } catch { return false; }
+    }
+    function iosHapticFallback(){
+      document.body.animate(
+        [{ transform:"scale(1)" }, { transform:"scale(0.998)" }, { transform:"scale(1)" }],
+        { duration: 140, easing:"ease-out" }
+      );
+      AudioEngine.click();
+    }
+    function haptic(pattern){
+      const ok = vib(pattern);
+      if (!ok && isIOS) iosHapticFallback();
     }
 
-    function showFeedback(kind, msg) {
-      feedback.className = "feedback show " + kind;
-      feedback.textContent = msg;
-      setDotColor(kind);
-    }
-
-    function clearFeedback() {
-      feedback.className = "feedback";
-      feedback.textContent = "";
-      setDotColor("accent");
-    }
-
-    function lockOptions() {
-      const radios = options.querySelectorAll('input[type="radio"]');
-      radios.forEach(r => r.disabled = true);
-      const labels = options.querySelectorAll(".opt");
-      labels.forEach(l => l.style.cursor = "default");
-    }
-
-    function resetOptionsStyles() {
-      const labels = options.querySelectorAll(".opt");
-      labels.forEach(l => l.classList.remove("good", "bad"));
-
-      const radios = options.querySelectorAll('input[type="radio"]');
-      radios.forEach(r => {
-        r.checked = false;
-        r.disabled = false;
-      });
-
-      labels.forEach(l => l.style.cursor = "pointer");
-    }
-
-    function renderQuestion() {
-      answeredCorrect = false;
-      unlocked = false;
-      continueBtn.disabled = true;
-      clearFeedback();
-
-      finalBox.classList.remove("show");
-      questionBox.style.display = "block";
-
-      const q = QUESTIONS[step];
-      qTitle.textContent = q.title;
-      qText.textContent = q.text;
-
-      options.innerHTML = "";
-      q.choices.forEach((label, idx) => {
-        const row = document.createElement("label");
-        row.className = "opt";
-        row.innerHTML = `
-          <input type="radio" name="choice" value="${idx}" />
-          <div>${label}</div>
-        `;
-        row.addEventListener("click", () => onPick(idx, row));
-        options.appendChild(row);
-      });
-
-      setProgress();
-    }
-
-    function onPick(idx, rowEl) {
-      if (answeredCorrect) return;
-
-      const q = QUESTIONS[step];
-
-      // reset styles
-      const labels = options.querySelectorAll(".opt");
-      labels.forEach(l => l.classList.remove("good", "bad"));
-
-      if (idx === q.correctIndex) {
-        rowEl.classList.add("good");
-        showFeedback("good", q.goodMsg);
-
-        unlocked = true;
-        answeredCorrect = true;
-        continueBtn.disabled = false;
-
-        lockOptions();
-        fill.style.width = Math.round(((step + 1) / QUESTIONS.length) * 100) + "%";
-      } else {
-        rowEl.classList.add("bad");
-        showFeedback("bad", q.badMsg);
-        unlocked = false;
-        continueBtn.disabled = true;
+    /********************
+     * TIMELINE
+     ********************/
+    class Timeline{
+      constructor(items){
+        this.items = items.slice().sort((a,b)=>a.atMs-b.atMs);
+        this.startedAt = 0;
+        this.i = 0;
+        this.raf = null;
+        this.running = false;
+      }
+      start(){
+        this.startedAt = performance.now();
+        this.i = 0;
+        this.running = true;
+        const tick = () => {
+          if (!this.running) return;
+          const now = performance.now();
+          const elapsed = now - this.startedAt;
+          while (this.i < this.items.length && elapsed >= this.items[this.i].atMs){
+            this.items[this.i].action();
+            this.i++;
+          }
+          this.raf = requestAnimationFrame(tick);
+        };
+        this.raf = requestAnimationFrame(tick);
+      }
+      stop(){
+        this.running = false;
+        if (this.raf) cancelAnimationFrame(this.raf);
+        this.raf = null;
       }
     }
 
-    continueBtn.addEventListener("click", () => {
-      if (!unlocked) return;
+    function buildTimeline(arr, { stamp=null } = {}){
+      return new Timeline(arr.map(obj => ({
+        atMs: obj.atMs,
+        action: () => {
+          const now = new Date();
+          const t = obj.t
+            .replace("{TIME}", formatTime(now))
+            .replace("{STAMP}", stamp ?? formatStamp(now));
+          addLine(t);
+        }
+      })));
+    }
 
-      step++;
-      if (step >= QUESTIONS.length) {
-        questionBox.style.display = "none";
-        finalBox.classList.add("show");
-        stageLabel.textContent = "Terminé";
-        fill.style.width = "100%";
-        setDotColor("good");
+    /********************
+     * AUDIO — continuous background music
+     ********************/
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const supportsWebAudio = !!AudioCtx;
+
+    const AudioEngine = (() => {
+      let ctx=null, master=null;
+      let unlocked=false;
+
+      // music nodes
+      let padGain=null, leadGain=null;
+      let padOscs=[], padLfo=null, padLfoGain=null;
+      let delay=null, delayGain=null;
+      let clickBus=null;
+
+      // mode
+      let mode="soft"; // "soft" | "thrill"
+
+      function ensure(){
+        if (!supportsWebAudio) return null;
+        if (ctx) return ctx;
+
+        ctx = new AudioCtx();
+        master = ctx.createGain();
+        master.gain.value = 0.0001;
+        master.connect(ctx.destination);
+
+        // pad bus
+        padGain = ctx.createGain();
+        padGain.gain.value = 0.0001;
+        padGain.connect(master);
+
+        // lead bus
+        leadGain = ctx.createGain();
+        leadGain.gain.value = 0.0001;
+        leadGain.connect(master);
+
+        // simple delay for space
+        delay = ctx.createDelay(1.0);
+        delay.delayTime.value = 0.22;
+        delayGain = ctx.createGain();
+        delayGain.gain.value = 0.20;
+        delay.connect(delayGain).connect(master);
+
+        // click bus
+        clickBus = ctx.createGain();
+        clickBus.gain.value = 0.10;
+        clickBus.connect(master);
+
+        // LFO for pad shimmer
+        padLfo = ctx.createOscillator();
+        padLfo.type = "sine";
+        padLfo.frequency.value = 0.12;
+        padLfoGain = ctx.createGain();
+        padLfoGain.gain.value = 6.0; // cents-ish modulation
+        padLfo.connect(padLfoGain);
+
+        padLfo.start();
+
+        return ctx;
+      }
+
+      async function unlock(){
+        if (!supportsWebAudio) return false;
+        ensure();
+        try{
+          if (ctx.state !== "running") await ctx.resume();
+          unlocked = true;
+          master.gain.setTargetAtTime(0.20, ctx.currentTime, 0.06);
+          // start music if not started
+          startMusic();
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function startMusic(){
+        if (!ctx || !unlocked) return;
+        if (padOscs.length) return;
+
+        // Base chord (will retune on mode switch)
+        const chord = getChord(mode, 0); // root chord
+        padOscs = chord.map((freq, i) => {
+          const o = ctx.createOscillator();
+          o.type = "sine";
+          o.frequency.value = freq;
+          // shimmer: very small detune via LFO
+          const det = ctx.createGain();
+          det.gain.value = 2.5;
+          padLfoGain.connect(o.detune);
+          o.connect(padGain);
+          o.connect(delay);
+          o.start();
+          return o;
+        });
+
+        // slow breathing pad volume
+        padGain.gain.setTargetAtTime(0.055, ctx.currentTime, 0.25);
+        leadGain.gain.setTargetAtTime(0.020, ctx.currentTime, 0.25);
+
+        // subtle lead plucks every few seconds
+        scheduleLead();
+      }
+
+      function getChord(m, step){
+        // soft: major-ish; thrill: minor-ish
+        // Use A as reference for pleasant mid range
+        const A4 = 440;
+        const root = (m === "thrill") ? 220 : 246.94; // A3 vs B3-ish
+        // simple triad + 7th
+        if (m === "thrill"){
+          // minor 7
+          return [root, root*Math.pow(2, 3/12), root*Math.pow(2, 7/12), root*Math.pow(2, 10/12)];
+        } else {
+          // major 7
+          return [root, root*Math.pow(2, 4/12), root*Math.pow(2, 7/12), root*Math.pow(2, 11/12)];
+        }
+      }
+
+      function scheduleLead(){
+        if (!ctx || !unlocked) return;
+
+        // gentle random arpeggio
+        const notes = getChord(mode, 0);
+        const pick = notes[Math.floor(Math.random()*notes.length)];
+        const o = ctx.createOscillator();
+        o.type = "triangle";
+        o.frequency.value = pick * (Math.random() < 0.5 ? 1 : 2);
+
+        const g = ctx.createGain();
+        g.gain.value = 0.0001;
+        o.connect(g).connect(leadGain);
+        o.connect(g).connect(delay);
+
+        const t = ctx.currentTime;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(mode === "thrill" ? 0.06 : 0.045, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + (mode === "thrill" ? 0.35 : 0.45));
+
+        o.start(t);
+        o.stop(t + 0.55);
+
+        setTimeout(scheduleLead, (mode === "thrill" ? 1900 : 2600) + Math.random()*900);
+      }
+
+      function setMode(newMode){
+        mode = newMode;
+        if (!ctx || !unlocked) return;
+
+        // retune pad oscillators smoothly
+        const chord = getChord(mode, 0);
+        padOscs.forEach((o, i) => {
+          if (!chord[i]) return;
+          o.frequency.setTargetAtTime(chord[i], ctx.currentTime, 0.15);
+        });
+
+        // change space + intensity
+        if (mode === "thrill"){
+          padGain.gain.setTargetAtTime(0.060, ctx.currentTime, 0.25);
+          leadGain.gain.setTargetAtTime(0.028, ctx.currentTime, 0.25);
+          delayGain.gain.setTargetAtTime(0.26, ctx.currentTime, 0.20);
+        } else {
+          padGain.gain.setTargetAtTime(0.052, ctx.currentTime, 0.25);
+          leadGain.gain.setTargetAtTime(0.020, ctx.currentTime, 0.25);
+          delayGain.gain.setTargetAtTime(0.20, ctx.currentTime, 0.20);
+        }
+      }
+
+      function click(){
+        if (!ctx || !unlocked) return;
+        const o = ctx.createOscillator();
+        o.type = "triangle";
+        o.frequency.value = 680;
+        const g = ctx.createGain();
+        g.gain.value = 0.0001;
+        o.connect(g).connect(clickBus);
+
+        const t = ctx.currentTime;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.06, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+
+        o.start(t);
+        o.stop(t + 0.09);
+      }
+
+      function chime(){
+        if (!ctx || !unlocked) return;
+        const base = 523.25; // C5
+        const o1 = ctx.createOscillator();
+        const o2 = ctx.createOscillator();
+        o1.type = "sine"; o2.type = "sine";
+        o1.frequency.value = base;
+        o2.frequency.value = base * 2.0;
+
+        const g = ctx.createGain();
+        g.gain.value = 0.0001;
+
+        o1.connect(g); o2.connect(g);
+        g.connect(master);
+
+        const t = ctx.currentTime;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.14, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+
+        o1.start(t); o2.start(t + 0.01);
+        o1.stop(t + 1.25); o2.stop(t + 1.25);
+      }
+
+      function fadeMaster(to, time=0.12){
+        if (!ctx || !master) return;
+        master.gain.setTargetAtTime(to, ctx.currentTime, time);
+      }
+
+      return {
+        ensure, unlock, setMode, click, chime, fadeMaster,
+        get unlocked(){ return unlocked; }
+      };
+    })();
+
+    /********************
+     * CLOCK tick
+     ********************/
+    let clockInterval = null;
+    function startClock({soft=true, frozen=false}={}){
+      stopClock();
+      clockEl.classList.toggle("soft", !!soft);
+      clockEl.classList.toggle("frozen", !!frozen);
+
+      const update = () => {
+        const now = new Date();
+        clockEl.textContent = formatTime(now);
+        // tiny minute feedback
+        if (now.getSeconds() === 0){
+          if (!vib([10]) && isIOS) iosHapticFallback();
+        }
+      };
+      update();
+      clockInterval = setInterval(update, 1000);
+    }
+    function stopClock(){
+      if (clockInterval) clearInterval(clockInterval);
+      clockInterval = null;
+    }
+
+    /********************
+     * FSM
+     ********************/
+    const STATES = {
+      BOOT:"BOOT",
+      CLOCK:"CLOCK",
+      AFTER_OPEN:"AFTER_OPEN",
+      HEARTS:"HEARTS",
+      MOOD:"MOOD",
+      PATH:"PATH",
+      DRAG:"DRAG",
+      HOLD:"HOLD",
+      TRUTH:"TRUTH",
+      QUESTION:"QUESTION",
+      ENDING:"ENDING",
+    };
+    let state = STATES.BOOT;
+    let timeline = null;
+    let nextTimer = null;
+
+    function clearTimers(){
+      if (timeline) timeline.stop();
+      timeline = null;
+      if (nextTimer) clearTimeout(nextTimer);
+      nextTimer = null;
+    }
+
+    function setBadge(s){ badgeText.textContent = s; }
+    function fadeCut(cb){
+      fade.classList.remove("hide");
+      setTimeout(()=>{ cb(); fade.classList.add("hide"); }, 520);
+    }
+
+    function transitionTo(s){
+      exitState(state);
+      state = s;
+      enterState(state);
+    }
+
+    function scheduleNext(ms){
+      if (!ms || ms <= 0) return;
+      nextTimer = setTimeout(()=>dispatch({type:"NEXT"}), ms);
+    }
+
+    function dispatch(evt){
+      switch(state){
+        case STATES.BOOT:
+          if (evt.type==="START") transitionTo(STATES.CLOCK);
+          break;
+        case STATES.CLOCK:
+          if (evt.type==="OPEN_CHOICE") transitionTo(STATES.AFTER_OPEN);
+          break;
+        case STATES.AFTER_OPEN:
+          if (evt.type==="NEXT") transitionTo(STATES.HEARTS);
+          break;
+        case STATES.HEARTS:
+          if (evt.type==="HEARTS_DONE") transitionTo(STATES.MOOD);
+          break;
+        case STATES.MOOD:
+          if (evt.type==="MOOD_CHOICE") transitionTo(STATES.PATH);
+          break;
+        case STATES.PATH:
+          if (evt.type==="NEXT") transitionTo(STATES.DRAG);
+          break;
+        case STATES.DRAG:
+          if (evt.type==="DRAG_DONE") transitionTo(STATES.HOLD);
+          break;
+        case STATES.HOLD:
+          if (evt.type==="HOLD_SUCCESS") transitionTo(STATES.TRUTH);
+          if (evt.type==="HOLD_CANCEL") holdHint.classList.add("show");
+          break;
+        case STATES.TRUTH:
+          if (evt.type==="NEXT") transitionTo(STATES.QUESTION);
+          break;
+        case STATES.QUESTION:
+          if (evt.type==="ANSWER_YES") transitionTo(STATES.ENDING);
+          break;
+        case STATES.ENDING:
+          if (evt.type==="RESET") hardReset();
+          break;
+      }
+    }
+
+    function exitState(s){
+      clearTimers();
+      choiceActions.style.display = "none";
+      choiceActions.innerHTML = "";
+      heartsZone.style.display = "none";
+      heartsHint.style.display = "none";
+      dragZone.style.display = "none";
+      holdWrap.style.display = "none";
+      holdHint.classList.remove("show");
+      ringSet(0);
+      setDot("accent");
+    }
+
+    function enterState(s){
+      clearLines();
+      setBadge(s);
+
+      if (s === STATES.BOOT){
+        footLeft.textContent = "Toucher l’écran pour démarrer (audio).";
+        footRight.textContent = supportsWebAudio ? "Musique prête" : "Audio non supporté";
+        startClock({soft:true, frozen:false});
+        AudioEngine.ensure();
+        timeline = buildTimeline(SCRIPT.BOOT);
+        timeline.start();
         return;
       }
-      renderQuestion();
+
+      if (s === STATES.CLOCK){
+        footLeft.textContent = "Décision 1 : maintenant ou plus tard.";
+        startClock({soft:true, frozen:false});
+
+        timeline = buildTimeline(SCRIPT.CLOCK);
+        timeline.start();
+
+        // After the last line, show choices
+        setTimeout(() => {
+          showChoices([
+            {
+              label: "Maintenant",
+              cls: "primary",
+              onClick: () => {
+                Branch.openingChoice = "now";
+                AudioEngine.click();
+                haptic([12,40,12]);
+                dispatch({type:"OPEN_CHOICE"});
+              }
+            },
+            {
+              label: "Plus tard",
+              cls: "soft",
+              onClick: () => {
+                Branch.openingChoice = "later";
+                AudioEngine.click();
+                haptic([10]);
+                dispatch({type:"OPEN_CHOICE"});
+              }
+            }
+          ]);
+        }, 12800);
+        return;
+      }
+
+      if (s === STATES.AFTER_OPEN){
+        footLeft.textContent = "On avance.";
+        startClock({soft:true, frozen:false});
+        const block = (Branch.openingChoice === "now") ? SCRIPT.AFTER_NOW : SCRIPT.AFTER_LATER;
+        timeline = buildTimeline(block);
+        timeline.start();
+        scheduleNext(10500);
+        return;
+      }
+
+      if (s === STATES.HEARTS){
+        footLeft.textContent = "Action : attrape 3 cœurs.";
+        startClock({soft:true, frozen:false});
+
+        timeline = buildTimeline(SCRIPT.HEARTS_ACTION);
+        timeline.start();
+
+        heartsZone.style.display = "block";
+        heartsHint.style.display = "block";
+        heartsHint.textContent = "Attrape 3 cœurs pour continuer.";
+
+        startHeartsMiniGame();
+        return;
+      }
+
+      if (s === STATES.MOOD){
+        footLeft.textContent = "Décision 2 : frisson ou douceur.";
+        startClock({soft:true, frozen:false});
+
+        timeline = buildTimeline(SCRIPT.MOOD_CHOICE);
+        timeline.start();
+
+        setTimeout(() => {
+          showChoices([
+            {
+              label:"Frisson",
+              cls:"primary",
+              onClick: () => {
+                Branch.moodChoice = "thrill";
+                AudioEngine.setMode("thrill");
+                haptic([20,50,20]);
+                AudioEngine.click();
+                dispatch({type:"MOOD_CHOICE"});
+              }
+            },
+            {
+              label:"Douceur",
+              cls:"soft",
+              onClick: () => {
+                Branch.moodChoice = "soft";
+                AudioEngine.setMode("soft");
+                haptic([10]);
+                AudioEngine.click();
+                dispatch({type:"MOOD_CHOICE"});
+              }
+            },
+          ]);
+        }, 5200);
+        return;
+      }
+
+      if (s === STATES.PATH){
+        footLeft.textContent = "Le mood change la suite.";
+        startClock({soft:true, frozen:false});
+
+        const block = (Branch.moodChoice === "thrill") ? SCRIPT.THRILL_PATH : SCRIPT.SOFT_PATH;
+        timeline = buildTimeline(block);
+        timeline.start();
+
+        // slight grain intensity on thrill
+        if (!prefersReducedMotion){
+          grain.style.opacity = (Branch.moodChoice === "thrill") ? "0.14" : "0.10";
+        }
+
+        scheduleNext(12000);
+        return;
+      }
+
+      if (s === STATES.DRAG){
+        footLeft.textContent = "Action : glisse le cœur dans le cadenas.";
+        startClock({soft:true, frozen:false});
+
+        timeline = buildTimeline(SCRIPT.DRAG_ACTION);
+        timeline.start();
+
+        dragZone.style.display = "flex";
+        lockTarget.classList.remove("hit");
+        initDragToLock();
+        return;
+      }
+
+      if (s === STATES.HOLD){
+        footLeft.textContent = "Moment unique.";
+        startClock({soft:true, frozen:true});
+        timeline = buildTimeline(SCRIPT.HOLD_GATE);
+        timeline.start();
+
+        holdWrap.style.display = "flex";
+        holdBtn.classList.add("pulse");
+        holdHint.classList.remove("show");
+        ringSet(0);
+        return;
+      }
+
+      if (s === STATES.TRUTH){
+        footLeft.textContent = "Juste la vérité.";
+        startClock({soft:true, frozen:false});
+
+        // calm mode at truth
+        AudioEngine.setMode("soft");
+
+        timeline = buildTimeline(SCRIPT.TRUTH);
+        timeline.start();
+        scheduleNext(27000);
+        return;
+      }
+
+      if (s === STATES.QUESTION){
+        footLeft.textContent = "La question.";
+        startClock({soft:true, frozen:false});
+
+        timeline = buildTimeline(SCRIPT.QUESTION);
+        timeline.start();
+
+        setTimeout(() => {
+          showChoices([
+            { label:"Oui", cls:"primary", onClick: answerYes },
+            { label:"Oui, je le veux", cls:"soft", onClick: answerYes }
+          ]);
+        }, 5200);
+        return;
+      }
+
+      if (s === STATES.ENDING){
+        footLeft.textContent = "Fin du jeu.";
+        startClock({soft:true, frozen:false});
+
+        const now = new Date();
+        const stamp = formatStamp(now);
+
+        localStorage.setItem(STORAGE_KEY_DONE, "true");
+        localStorage.setItem(STORAGE_KEY_TIME, now.toISOString());
+        if (SESSION_ID) localStorage.setItem(STORAGE_KEY_SID_USED_PREFIX + SESSION_ID, "true");
+
+        setDot("good");
+
+        timeline = buildTimeline(SCRIPT.ENDING, { stamp });
+        timeline.start();
+
+        AudioEngine.chime();
+        heartsRain();
+
+        // optional reset button (discret)
+        setTimeout(() => {
+          showChoices([
+            {
+              label:"Recommencer",
+              cls:"soft",
+              onClick: () => hardReset()
+            }
+          ]);
+        }, 9800);
+
+        return;
+      }
+    }
+
+    function showChoices(btns){
+      choiceActions.style.display = "flex";
+      choiceActions.innerHTML = "";
+      btns.forEach(b => {
+        const el = document.createElement("button");
+        el.textContent = b.label;
+        if (b.cls) el.classList.add(b.cls);
+        el.addEventListener("click", b.onClick);
+        choiceActions.appendChild(el);
+      });
+    }
+
+    /********************
+     * ANTI-REPLAY
+     ********************/
+    function hasUsedSession(){
+      if (!SESSION_ID) return false;
+      return localStorage.getItem(STORAGE_KEY_SID_USED_PREFIX + SESSION_ID) === "true";
+    }
+    function alreadyDone(){
+      return localStorage.getItem(STORAGE_KEY_DONE) === "true";
+    }
+    function hardReset(){
+      localStorage.removeItem(STORAGE_KEY_DONE);
+      localStorage.removeItem(STORAGE_KEY_TIME);
+      if (SESSION_ID) localStorage.removeItem(STORAGE_KEY_SID_USED_PREFIX + SESSION_ID);
+      fadeCut(() => transitionTo(STATES.BOOT));
+    }
+
+    /********************
+     * HEARTS MINIGAME (tap 3 hearts)
+     ********************/
+    let heartsCaught = 0;
+    let heartsRunning = false;
+
+    function rand(min,max){ return min + Math.random()*(max-min); }
+
+    function spawnHeart(){
+      if (!heartsRunning) return;
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.innerHTML = "<span>❤</span>";
+
+      const x = rand(12, 88);
+      const y = rand(22, 78);
+      h.style.left = x + "%";
+      h.style.top  = y + "%";
+
+      // small drift animation via Web Animations
+      const dx = rand(-18, 18);
+      const dy = rand(-14, 14);
+      const dur = rand(1600, 2400);
+
+      const anim = h.animate(
+        [
+          { transform:`translate(-50%,-50%) translate(0px,0px)` },
+          { transform:`translate(-50%,-50%) translate(${dx}px,${dy}px)` }
+        ],
+        { duration: dur, direction:"alternate", iterations: Infinity, easing:"ease-in-out" }
+      );
+
+      h.addEventListener("click", () => {
+        if (!heartsRunning) return;
+        heartsCaught++;
+        AudioEngine.click();
+        haptic([10]);
+        h.style.opacity = "0";
+        anim.cancel();
+        setTimeout(()=>h.remove(), 150);
+
+        heartsHint.textContent = `Cœurs attrapés : ${heartsCaught}/3`;
+
+        if (heartsCaught >= 3){
+          heartsRunning = false;
+          setTimeout(() => {
+            heartsZone.innerHTML = "";
+            heartsZone.style.display = "none";
+            heartsHint.style.display = "none";
+            dispatch({type:"HEARTS_DONE"});
+          }, 350);
+        } else {
+          spawnHeart();
+        }
+      });
+
+      heartsZone.appendChild(h);
+    }
+
+    function startHeartsMiniGame(){
+      heartsCaught = 0;
+      heartsRunning = true;
+      heartsZone.innerHTML = "";
+      heartsHint.textContent = "Cœurs attrapés : 0/3";
+      spawnHeart();
+      spawnHeart();
+      spawnHeart();
+      // keep it not overwhelming: if user waits, hearts stay
+    }
+
+    /********************
+     * DRAG HEART → LOCK
+     ********************/
+    let dragging = false;
+    let dragOffset = {x:0,y:0};
+    let dragStartRect = null;
+
+    function rect(el){ return el.getBoundingClientRect(); }
+
+    function resetDragHeart(){
+      dragHeart.style.transform = "translate(0px,0px)";
+      dragHeart.dataset.tx = "0";
+      dragHeart.dataset.ty = "0";
+    }
+
+    function initDragToLock(){
+      resetDragHeart();
+
+      const onDown = (e) => {
+        e.preventDefault();
+        dragging = true;
+        AudioEngine.click();
+        haptic([10]);
+        dragHeart.setPointerCapture?.(e.pointerId);
+
+        const r = rect(dragHeart);
+        dragStartRect = r;
+        const clientX = e.clientX ?? (e.touches?.[0]?.clientX);
+        const clientY = e.clientY ?? (e.touches?.[0]?.clientY);
+        dragOffset.x = clientX - r.left;
+        dragOffset.y = clientY - r.top;
+      };
+
+      const onMove = (e) => {
+        if (!dragging) return;
+        const clientX = e.clientX ?? (e.touches?.[0]?.clientX);
+        const clientY = e.clientY ?? (e.touches?.[0]?.clientY);
+        if (clientX == null || clientY == null) return;
+
+        const tx = clientX - dragStartRect.left - dragOffset.x;
+        const ty = clientY - dragStartRect.top - dragOffset.y;
+
+        dragHeart.style.transform = `translate(${tx}px, ${ty}px)`;
+        dragHeart.dataset.tx = String(tx);
+        dragHeart.dataset.ty = String(ty);
+
+        // check hit
+        const hr = rect(dragHeart);
+        const lr = rect(lockTarget);
+        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
+        lockTarget.classList.toggle("hit", hit);
+      };
+
+      const onUp = (e) => {
+        if (!dragging) return;
+        dragging = false;
+
+        const hr = rect(dragHeart);
+        const lr = rect(lockTarget);
+        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
+
+        if (hit){
+          lockTarget.classList.add("hit");
+          AudioEngine.chime();
+          haptic([20,50,20]);
+          // snap into place
+          fadeCut(() => {
+            dragZone.style.display = "none";
+            dispatch({type:"DRAG_DONE"});
+          });
+        } else {
+          lockTarget.classList.remove("hit");
+          // return back
+          AudioEngine.click();
+          haptic([10]);
+          resetDragHeart();
+        }
+      };
+
+      // Clear old listeners by cloning node (simple safe)
+      const newNode = dragHeart.cloneNode(true);
+      dragHeart.parentNode.replaceChild(newNode, dragHeart);
+      // rebind global ref
+      window.__dragHeart = newNode;
+
+      // update variable reference
+      // (we keep a getter to avoid rewriting many)
+      Object.defineProperty(window, "dragHeartNode", { value: newNode });
+
+      newNode.addEventListener("pointerdown", onDown);
+      window.addEventListener("pointermove", onMove, { passive:false });
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
+    }
+
+    // Use current dragHeart element reference
+    // (simple mapping for other functions)
+    Object.defineProperty(window, "dragHeartEl", {
+      get(){ return window.__dragHeart || document.getElementById("dragHeart"); }
     });
 
-    retryBtn.addEventListener("click", () => {
-      answeredCorrect = false;
-      unlocked = false;
-      continueBtn.disabled = true;
-      clearFeedback();
-      resetOptionsStyles();
-    });
+    /********************
+     * HOLD-TO-COMMIT
+     ********************/
+    const RING_CIRC = 301.59;
+    function ringSet(p01){
+      const p = Math.max(0, Math.min(1, p01));
+      ringProg.style.strokeDashoffset = (RING_CIRC * (1 - p)).toFixed(2);
+    }
 
-    resetBtn.addEventListener("click", () => {
-      step = 0;
-      renderQuestion();
-    });
+    let holding=false;
+    let holdStart=0;
+    let holdRAF=null;
+    let hbTimer=null;
 
-    // Init
-    renderQuestion();
+    function startHeartbeatHaptics(){
+      stopHeartbeatHaptics();
+      hbTimer = setInterval(() => haptic([10]), 900);
+    }
+    function stopHeartbeatHaptics(){
+      if (hbTimer) clearInterval(hbTimer);
+      hbTimer = null;
+    }
+
+    function holdStartFn(){
+      if (state !== STATES.HOLD) return;
+      if (holding) return;
+      holding = true;
+      holdHint.classList.remove("show");
+      holdStart = performance.now();
+      ringSet(0);
+
+      // Unlock audio if not already
+      AudioEngine.unlock().then(() => {
+        // in thrill mode, keep a tiny tension
+        if (Branch.moodChoice === "thrill") AudioEngine.setMode("thrill");
+        else AudioEngine.setMode("soft");
+      });
+
+      AudioEngine.click();
+      startHeartbeatHaptics();
+
+      const tick = () => {
+        if (!holding) return;
+        const elapsed = performance.now() - holdStart;
+        const p = elapsed / HOLD_DURATION_MS;
+        ringSet(p);
+
+        if (p >= 0.5 && p < 0.52){
+          haptic([20]);
+        }
+
+        if (p >= 1){
+          holdSuccessFn();
+          return;
+        }
+        holdRAF = requestAnimationFrame(tick);
+      };
+      holdRAF = requestAnimationFrame(tick);
+    }
+
+    function holdCancelFn(){
+      if (state !== STATES.HOLD) return;
+      if (!holding) return;
+      holding = false;
+      if (holdRAF) cancelAnimationFrame(holdRAF);
+      holdRAF = null;
+
+      stopHeartbeatHaptics();
+      ringSet(0);
+
+      holdHint.textContent = "Prends ton temps.";
+      holdHint.classList.add("show");
+      AudioEngine.click();
+
+      dispatch({type:"HOLD_CANCEL"});
+    }
+
+    function holdSuccessFn(){
+      if (state !== STATES.HOLD) return;
+      holding = false;
+      if (holdRAF) cancelAnimationFrame(holdRAF);
+      holdRAF = null;
+
+      stopHeartbeatHaptics();
+      ringSet(1);
+
+      haptic([30,60,30]);
+      AudioEngine.chime();
+      holdBtn.classList.remove("pulse");
+      setDot("good");
+
+      fadeCut(() => {
+        startClock({soft:true, frozen:false});
+        dispatch({type:"HOLD_SUCCESS"});
+      });
+    }
+
+    holdBtn.addEventListener("pointerdown", (e)=>{ e.preventDefault(); holdStartFn(); });
+    holdBtn.addEventListener("pointerup", (e)=>{ e.preventDefault(); holdCancelFn(); });
+    holdBtn.addEventListener("pointercancel", (e)=>{ e.preventDefault(); holdCancelFn(); });
+    holdBtn.addEventListener("pointerleave", ()=>{ if (holding) holdCancelFn(); });
+
+    /********************
+     * YES (final)
+     ********************/
+    function answerYes(){
+      haptic([25]);
+      AudioEngine.unlock().then(() => {
+        AudioEngine.click();
+        setTimeout(()=>AudioEngine.chime(), 140);
+      });
+      dispatch({type:"ANSWER_YES"});
+    }
+
+    /********************
+     * HEART RAIN (ending wow)
+     ********************/
+    function heartsRain(){
+      rain.innerHTML = "";
+      rain.classList.add("show");
+      const symbols = ["❤","💗","💖","💕","💞"];
+      const count = 48;
+
+      for (let i=0;i<count;i++){
+        const d = document.createElement("div");
+        d.className = "drop";
+        d.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+        d.style.left = (Math.random()*100).toFixed(2) + "vw";
+        d.style.animationDuration = (2.8 + Math.random()*2.8).toFixed(2) + "s";
+        d.style.opacity = (0.55 + Math.random()*0.45).toFixed(2);
+        d.style.fontSize = (14 + Math.random()*20).toFixed(0) + "px";
+        d.style.animationDelay = (Math.random()*0.8).toFixed(2) + "s";
+        rain.appendChild(d);
+      }
+      setTimeout(()=>rain.classList.remove("show"), 5200);
+    }
+
+    /********************
+     * START (unlock audio on first gesture)
+     ********************/
+    function init(){
+      startClock({soft:true, frozen:false});
+      AudioEngine.ensure();
+
+      if (prefersReducedMotion){
+        grain.style.opacity = "0.06";
+      }
+
+      // If already done or sid used, jump to ENDING (with stored time)
+      if (alreadyDone() || hasUsedSession()){
+        fade.classList.add("hide");
+        transitionTo(STATES.ENDING);
+
+        const iso = localStorage.getItem(STORAGE_KEY_TIME);
+        if (iso){
+          const d = new Date(iso);
+          const stamp = formatStamp(d);
+          clearLines();
+          timeline = buildTimeline(SCRIPT.ENDING, { stamp });
+          timeline.start();
+        }
+        return;
+      }
+
+      transitionTo(STATES.BOOT);
+      fade.classList.add("hide");
+
+      // First gesture anywhere to unlock + start
+      const startHandler = async () => {
+        document.removeEventListener("pointerdown", startHandler, { capture:true });
+        await AudioEngine.unlock();
+        AudioEngine.setMode("soft");
+        AudioEngine.click();
+        haptic([10]);
+        fadeCut(() => dispatch({type:"START"}));
+      };
+
+      document.addEventListener("pointerdown", startHandler, { capture:true });
+    }
+
+    // State enter logic that needs buttons/actions to appear
+    function enterState(s){
+      // (redefined here to keep single definition readable)
+      // This wrapper calls the earlier enterState defined above.
+    }
+
+    // We already defined enterState above; keep it.
+    // Just run init.
+    setTimeout(init, 20);
+
+    // Fix: override drag references after cloning
+    // Ensure drag init uses live element
+    function initDragToLock(){
+      // restore reference each time
+      const current = document.getElementById("dragHeart");
+      // clone to remove previous listeners
+      const newNode = current.cloneNode(true);
+      current.parentNode.replaceChild(newNode, current);
+
+      // update ids for safety
+      newNode.id = "dragHeart";
+
+      // local helpers
+      let draggingLocal = false;
+      let dragOffsetLocal = {x:0,y:0};
+      let startRect = null;
+
+      const onDown = (e) => {
+        e.preventDefault();
+        draggingLocal = true;
+        AudioEngine.click();
+        haptic([10]);
+        newNode.setPointerCapture?.(e.pointerId);
+
+        startRect = newNode.getBoundingClientRect();
+        dragOffsetLocal.x = e.clientX - startRect.left;
+        dragOffsetLocal.y = e.clientY - startRect.top;
+      };
+
+      const onMove = (e) => {
+        if (!draggingLocal) return;
+        const tx = e.clientX - startRect.left - dragOffsetLocal.x;
+        const ty = e.clientY - startRect.top - dragOffsetLocal.y;
+
+        newNode.style.transform = `translate(${tx}px, ${ty}px)`;
+
+        const hr = newNode.getBoundingClientRect();
+        const lr = lockTarget.getBoundingClientRect();
+        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
+        lockTarget.classList.toggle("hit", hit);
+      };
+
+      const onUp = () => {
+        if (!draggingLocal) return;
+        draggingLocal = false;
+
+        const hr = newNode.getBoundingClientRect();
+        const lr = lockTarget.getBoundingClientRect();
+        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
+
+        if (hit){
+          lockTarget.classList.add("hit");
+          AudioEngine.chime();
+          haptic([20,50,20]);
+          fadeCut(() => {
+            dragZone.style.display = "none";
+            dispatch({type:"DRAG_DONE"});
+          });
+        } else {
+          lockTarget.classList.remove("hit");
+          AudioEngine.click();
+          haptic([10]);
+          newNode.style.transform = "translate(0px,0px)";
+        }
+      };
+
+      newNode.addEventListener("pointerdown", onDown);
+      window.addEventListener("pointermove", onMove, { passive:false });
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
+    }
+
+    // Re-declare enterState with access to initDragToLock above (same logic, but now it calls the corrected initDragToLock)
+    const _enterState = (function(){
+      return function(s){
+        clearLines();
+        setBadge(s);
+
+        // hide sections
+        choiceActions.style.display = "none";
+        choiceActions.innerHTML = "";
+        heartsZone.style.display = "none";
+        heartsHint.style.display = "none";
+        dragZone.style.display = "none";
+        holdWrap.style.display = "none";
+        holdHint.classList.remove("show");
+        ringSet(0);
+        setDot("accent");
+
+        if (s === STATES.BOOT){
+          footLeft.textContent = "Toucher l’écran pour démarrer (audio).";
+          footRight.textContent = supportsWebAudio ? "Musique prête" : "Audio non supporté";
+          startClock({soft:true, frozen:false});
+          AudioEngine.ensure();
+          timeline = buildTimeline(SCRIPT.BOOT);
+          timeline.start();
+          return;
+        }
+
+        if (s === STATES.CLOCK){
+          footLeft.textContent = "Décision 1 : maintenant ou plus tard.";
+          startClock({soft:true, frozen:false});
+          timeline = buildTimeline(SCRIPT.CLOCK);
+          timeline.start();
+
+          setTimeout(() => {
+            showChoices([
+              { label:"Maintenant", cls:"primary", onClick: () => { Branch.openingChoice="now"; AudioEngine.click(); haptic([12,40,12]); dispatch({type:"OPEN_CHOICE"}); } },
+              { label:"Plus tard", cls:"soft", onClick: () => { Branch.openingChoice="later"; AudioEngine.click(); haptic([10]); dispatch({type:"OPEN_CHOICE"}); } },
+            ]);
+          }, 12800);
+          return;
+        }
+
+        if (s === STATES.AFTER_OPEN){
+          footLeft.textContent = "On avance.";
+          startClock({soft:true, frozen:false});
+          const block = (Branch.openingChoice === "now") ? SCRIPT.AFTER_NOW : SCRIPT.AFTER_LATER;
+          timeline = buildTimeline(block);
+          timeline.start();
+          scheduleNext(10500);
+          return;
+        }
+
+        if (s === STATES.HEARTS){
+          footLeft.textContent = "Action : attrape 3 cœurs.";
+          startClock({soft:true, frozen:false});
+          timeline = buildTimeline(SCRIPT.HEARTS_ACTION);
+          timeline.start();
+          heartsZone.style.display = "block";
+          heartsHint.style.display = "block";
+          startHeartsMiniGame();
+          return;
+        }
+
+        if (s === STATES.MOOD){
+          footLeft.textContent = "Décision 2 : frisson ou douceur.";
+          startClock({soft:true, frozen:false});
+          timeline = buildTimeline(SCRIPT.MOOD_CHOICE);
+          timeline.start();
+
+          setTimeout(() => {
+            showChoices([
+              { label:"Frisson", cls:"primary", onClick: () => { Branch.moodChoice="thrill"; AudioEngine.setMode("thrill"); haptic([20,50,20]); AudioEngine.click(); dispatch({type:"MOOD_CHOICE"}); } },
+              { label:"Douceur", cls:"soft", onClick: () => { Branch.moodChoice="soft"; AudioEngine.setMode("soft"); haptic([10]); AudioEngine.click(); dispatch({type:"MOOD_CHOICE"}); } },
+            ]);
+          }, 5200);
+          return;
+        }
+
+        if (s === STATES.PATH){
+          footLeft.textContent = "Le mood change la suite.";
+          startClock({soft:true, frozen:false});
+          const block = (Branch.moodChoice === "thrill") ? SCRIPT.THRILL_PATH : SCRIPT.SOFT_PATH;
+          timeline = buildTimeline(block);
+          timeline.start();
+          if (!prefersReducedMotion){
+            grain.style.opacity = (Branch.moodChoice === "thrill") ? "0.14" : "0.10";
+          }
+          scheduleNext(12000);
+          return;
+        }
+
+        if (s === STATES.DRAG){
+          footLeft.textContent = "Action : glisse le cœur dans le cadenas.";
+          startClock({soft:true, frozen:false});
+          timeline = buildTimeline(SCRIPT.DRAG_ACTION);
+          timeline.start();
+          dragZone.style.display = "flex";
+          lockTarget.classList.remove("hit");
+          initDragToLock();
+          return;
+        }
+
+        if (s === STATES.HOLD){
+          footLeft.textContent = "Moment unique.";
+          startClock({soft:true, frozen:true});
+          timeline = buildTimeline(SCRIPT.HOLD_GATE);
+          timeline.start();
+          holdWrap.style.display = "flex";
+          holdBtn.classList.add("pulse");
+          holdHint.classList.remove("show");
+          ringSet(0);
+          return;
+        }
+
+        if (s === STATES.TRUTH){
+          footLeft.textContent = "Juste la vérité.";
+          startClock({soft:true, frozen:false});
+          AudioEngine.setMode("soft");
+          timeline = buildTimeline(SCRIPT.TRUTH);
+          timeline.start();
+          scheduleNext(27000);
+          return;
+        }
+
+        if (s === STATES.QUESTION){
+          footLeft.textContent = "La question.";
+          startClock({soft:true, frozen:false});
+          timeline = buildTimeline(SCRIPT.QUESTION);
+          timeline.start();
+          setTimeout(() => {
+            showChoices([
+              { label:"Oui", cls:"primary", onClick: answerYes },
+              { label:"Oui, je le veux", cls:"soft", onClick: answerYes }
+            ]);
+          }, 5200);
+          return;
+        }
+
+        if (s === STATES.ENDING){
+          footLeft.textContent = "Fin du jeu.";
+          startClock({soft:true, frozen:false});
+
+          const now = new Date();
+          const stamp = formatStamp(now);
+
+          localStorage.setItem(STORAGE_KEY_DONE, "true");
+          localStorage.setItem(STORAGE_KEY_TIME, now.toISOString());
+          if (SESSION_ID) localStorage.setItem(STORAGE_KEY_SID_USED_PREFIX + SESSION_ID, "true");
+
+          setDot("good");
+          timeline = buildTimeline(SCRIPT.ENDING, { stamp });
+          timeline.start();
+
+          AudioEngine.chime();
+          heartsRain();
+
+          setTimeout(() => {
+            showChoices([{ label:"Recommencer", cls:"soft", onClick: hardReset }]);
+          }, 9800);
+
+          return;
+        }
+      };
+    })();
+
+    // Replace enterState with the corrected one
+    enterState = _enterState;
+
+    // Ensure BOOT to CLOCK start works
+    function dispatch(evt){
+      switch(state){
+        case STATES.BOOT:
+          if (evt.type==="START"){ fadeCut(()=>transitionTo(STATES.CLOCK)); }
+          break;
+        case STATES.CLOCK:
+          if (evt.type==="OPEN_CHOICE"){ fadeCut(()=>transitionTo(STATES.AFTER_OPEN)); scheduleNext(0); }
+          break;
+        case STATES.AFTER_OPEN:
+          if (evt.type==="NEXT"){ fadeCut(()=>transitionTo(STATES.HEARTS)); }
+          break;
+        case STATES.HEARTS:
+          if (evt.type==="HEARTS_DONE"){ fadeCut(()=>transitionTo(STATES.MOOD)); }
+          break;
+        case STATES.MOOD:
+          if (evt.type==="MOOD_CHOICE"){ fadeCut(()=>transitionTo(STATES.PATH)); scheduleNext(0); }
+          break;
+        case STATES.PATH:
+          if (evt.type==="NEXT"){ fadeCut(()=>transitionTo(STATES.DRAG)); }
+          break;
+        case STATES.DRAG:
+          if (evt.type==="DRAG_DONE"){ fadeCut(()=>transitionTo(STATES.HOLD)); }
+          break;
+        case STATES.HOLD:
+          if (evt.type==="HOLD_SUCCESS"){ fadeCut(()=>transitionTo(STATES.TRUTH)); }
+          if (evt.type==="HOLD_CANCEL"){ holdHint.classList.add("show"); }
+          break;
+        case STATES.TRUTH:
+          if (evt.type==="NEXT"){ fadeCut(()=>transitionTo(STATES.QUESTION)); }
+          break;
+        case STATES.QUESTION:
+          if (evt.type==="ANSWER_YES"){ fadeCut(()=>transitionTo(STATES.ENDING)); }
+          break;
+        case STATES.ENDING:
+          if (evt.type==="RESET"){ hardReset(); }
+          break;
+      }
+    }
+
   </script>
 </body>
 </html>
