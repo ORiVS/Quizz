@@ -9,7 +9,6 @@
     :root{
       --bg1:#120013;
       --bg2:#2a001b;
-      --card: rgba(255,255,255,.08);
       --stroke: rgba(255,255,255,.14);
       --ink: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
@@ -35,7 +34,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Soft animated glow */
     .glow{
       position:fixed; inset:-40px;
       background:
@@ -52,7 +50,6 @@
       50%{ transform: translate(-10px,8px) scale(1.05); }
     }
 
-    /* Film grain */
     .grain{
       position:fixed; inset:0;
       pointer-events:none;
@@ -147,18 +144,16 @@
       color: rgba(255,255,255,.95);
       text-shadow: 0 10px 30px rgba(255,77,109,.12);
     }
-    .clock.soft{
-      animation: clockPulse 2.6s ease-in-out infinite;
-    }
+    .clock.soft{ animation: clockPulse 2.6s ease-in-out infinite; }
     @keyframes clockPulse{
       0%,100%{ transform: scale(1.00); opacity: .96; }
       50%{ transform: scale(1.03); opacity: 1; }
     }
-    .clock.frozen{ opacity:.85; }
+    .clock.frozen{ opacity:.85; filter:saturate(.95); }
 
     main{
       padding: 18px;
-      min-height: 430px;
+      min-height: 460px;
       display:flex;
       flex-direction:column;
       justify-content:center;
@@ -169,7 +164,7 @@
       display:flex;
       flex-direction:column;
       gap:10px;
-      max-width: 760px;
+      max-width: 780px;
     }
     .line{
       margin:0;
@@ -185,16 +180,6 @@
     .line.show{
       opacity:1;
       transform: translateY(0);
-    }
-    .line.muted{
-      color: rgba(255,255,255,.68);
-      font-size: 16px;
-    }
-
-    .subtle{
-      font-size: 12px;
-      color: rgba(255,255,255,.62);
-      margin-top: 6px;
     }
 
     .actions{
@@ -229,94 +214,107 @@
     }
     button.soft:hover{ background: rgba(255,143,171,.20); }
 
-    /* Floating hearts mini action */
-    .heartsZone{
+    /* Soft path zone (petals) */
+    .softZone{
       position:relative;
-      height: 160px;
+      height: 170px;
       border-radius: 22px;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.14);
       overflow:hidden;
       display:none;
     }
-    .heart{
+    .petal{
       position:absolute;
-      width: 56px; height:56px;
-      border-radius: 18px;
+      width: 58px; height:58px;
+      border-radius: 20px;
       display:grid;
       place-items:center;
       cursor:pointer;
       user-select:none;
       border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,77,109,.14);
-      box-shadow: 0 16px 40px rgba(255,77,109,.12);
+      background: rgba(255,143,171,.14);
+      box-shadow: 0 16px 40px rgba(255,143,171,.10);
       transform: translate(-50%,-50%);
       transition: transform .12s ease, opacity .2s ease;
     }
-    .heart:active{ transform: translate(-50%,-50%) scale(.96); }
-    .heart span{
-      font-size: 22px;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.25));
-    }
-    .heartsHint{
+    .petal:active{ transform: translate(-50%,-50%) scale(.96); }
+    .petal span{ font-size: 22px; filter: drop-shadow(0 10px 18px rgba(0,0,0,.25)); }
+    .softHint{
       display:none;
       color: rgba(255,255,255,.70);
       font-size: 13px;
       margin-top: 10px;
     }
 
-    /* Drag heart into lock */
-    .dragZone{
+    /* Thrill path zone (rhythm taps) */
+    .thrillZone{
       display:none;
-      gap:14px;
+      gap:12px;
+      flex-direction:column;
+      margin-top: 8px;
+      padding: 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.14);
+    }
+    .thrillRow{
+      display:flex;
+      gap:10px;
       align-items:center;
       flex-wrap:wrap;
-      margin-top: 8px;
+      justify-content:space-between;
     }
-    .draggable{
-      width: 84px; height:84px;
-      border-radius: 26px;
-      display:grid;
-      place-items:center;
-      background: rgba(255,77,109,.18);
-      border: 1px solid rgba(255,255,255,.18);
-      cursor: grab;
+    .thrillBadge{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
       user-select:none;
-      box-shadow: 0 18px 46px rgba(255,77,109,.14);
-      touch-action: none;
-      position:relative;
+      white-space:nowrap;
     }
-    .draggable:active{ cursor: grabbing; }
-    .draggable span{ font-size: 30px; }
-    .lockTarget{
-      width: 160px; height:84px;
-      border-radius: 26px;
+    .beatBtn{
+      width:min(420px,100%);
+      height: 64px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,77,109,.28);
+      background: rgba(255,77,109,.10);
+      color: rgba(255,255,255,.95);
+      font-size: 15px;
+      cursor:pointer;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:10px;
-      background: rgba(0,0,0,.14);
-      border: 1px dashed rgba(255,255,255,.22);
-      color: rgba(255,255,255,.78);
       user-select:none;
+      outline:none;
+      position:relative;
+      overflow:hidden;
     }
-    .lockTarget.hit{
-      border-color: rgba(255,77,109,.70);
-      background: rgba(255,77,109,.12);
-      box-shadow: 0 0 0 10px rgba(255,77,109,.08);
+    .beatBtn.pulse{
+      animation: beatPulse 0.8s ease-in-out infinite;
     }
+    @keyframes beatPulse{
+      0%,100%{ box-shadow: 0 0 0 0 rgba(255,77,109,.00); transform: scale(1); }
+      50%{ box-shadow: 0 0 0 12px rgba(255,77,109,.10); transform: scale(1.01); }
+    }
+    .thrillHint{
+      color: rgba(255,255,255,.70);
+      font-size: 13px;
+    }
+    .thrillHint strong{ color: rgba(255,255,255,.90); font-weight: 700; }
 
-    /* Hold-to-commit */
+    /* Hold-to-commit (sans barre) */
     .holdWrap{
       display:none;
       align-items:center;
-      gap:16px;
+      gap:12px;
       flex-wrap:wrap;
       margin-top: 6px;
     }
     .holdBtn{
-      position:relative;
-      width:min(420px, 100%);
+      width:min(460px, 100%);
       height: 64px;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.18);
@@ -329,27 +327,13 @@
       justify-content:center;
       user-select:none;
       outline:none;
-      overflow:hidden;
     }
-    .holdBtn.pulse{
-      animation: pulseRing 1.8s ease-in-out infinite;
-    }
+    .holdBtn.pulse{ animation: pulseRing 1.8s ease-in-out infinite; }
     @keyframes pulseRing{
       0%{ box-shadow: 0 0 0 0 rgba(255,77,109,.00); }
       50%{ box-shadow: 0 0 0 12px rgba(255,77,109,.10); }
       100%{ box-shadow: 0 0 0 0 rgba(255,77,109,.00); }
     }
-    .ring{
-      width: 56px;
-      height: 56px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.12);
-      display:grid;
-      place-items:center;
-      overflow:hidden;
-    }
-    .ring svg{ width: 52px; height:52px; }
     .hint{
       display:none;
       color: rgba(255,255,255,.70);
@@ -357,7 +341,6 @@
     }
     .hint.show{ display:block; }
 
-    /* Ending hearts rain */
     .rain{
       position:fixed; inset:0;
       pointer-events:none;
@@ -403,6 +386,8 @@
       .line{ transition:none; }
       button{ transition:none; }
       .clock.soft{ animation:none; }
+      .beatBtn.pulse{ animation:none; }
+      .holdBtn.pulse{ animation:none; }
     }
   </style>
 </head>
@@ -418,7 +403,7 @@
     <div class="card">
       <div class="top">
         <div class="title">
-          <h1 id="headerTitle">Saint-Valentin</h1>
+          <h1>Saint-Valentin</h1>
           <div class="clock soft" id="clock">--:--:--</div>
         </div>
         <div class="badge">
@@ -432,26 +417,20 @@
 
         <div class="actions" id="choiceActions" style="display:none;"></div>
 
-        <div class="heartsZone" id="heartsZone"></div>
-        <div class="heartsHint" id="heartsHint">Attrape 3 cœurs pour continuer.</div>
+        <div class="softZone" id="softZone"></div>
+        <div class="softHint" id="softHint"></div>
 
-        <div class="dragZone" id="dragZone">
-          <div class="draggable" id="dragHeart" aria-label="Cœur à déplacer"><span>❤</span></div>
-          <div class="lockTarget" id="lockTarget" aria-label="Cadenas">
-            <span style="font-size:18px;">🔒</span>
-            <span>Glisse le cœur ici</span>
+        <div class="thrillZone" id="thrillZone">
+          <div class="thrillRow">
+            <div class="thrillBadge" id="thrillScore">Série : 0/3</div>
+            <div class="thrillBadge" id="thrillWindow">Fenêtre : fermée</div>
           </div>
+          <button class="beatBtn" id="beatBtn" type="button">Tape sur le battement</button>
+          <div class="thrillHint" id="thrillHint">Objectif : <strong>3 taps</strong> pile au bon moment. Si tu rates, la série retombe.</div>
         </div>
 
         <div class="holdWrap" id="holdWrap">
-          <button class="holdBtn pulse" id="holdBtn" type="button">Maintiens ton doigt ici</button>
-          <div class="ring" aria-hidden="true">
-            <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="48" stroke="rgba(255,255,255,.16)" stroke-width="10" fill="none"></circle>
-              <circle id="ringProg" cx="60" cy="60" r="48" stroke="rgba(255,77,109,.95)" stroke-width="10" fill="none"
-                stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="301.59" stroke-dashoffset="301.59"></circle>
-            </svg>
-          </div>
+          <button class="holdBtn pulse" id="holdBtn" type="button">Garde ton doigt ici</button>
           <div class="hint" id="holdHint">Prends ton temps.</div>
         </div>
       </main>
@@ -465,22 +444,20 @@
 
   <script>
     /*****************************************************************
-     * VALENTINE IMMERSIVE — 1 FILE
-     * - Valentine theme UI
-     * - Continuous background music (WebAudio), unlock on first gesture
-     * - Decisions + mini actions (hearts tap + drag + hold)
-     * - FSM + Timeline scheduler
-     * - Vibration + iOS fallback
-     * - Anti-replay (localStorage + optional sid)
+     * VALENTINE IMMERSIVE — 1 FILE (PARCOURS SOFT / THRILL)
+     * - Horloge + CLOCK + PRESENCE + FUTURE (comme demandé)
+     * - Choix "Douceur/Frisson" => VRAIS parcours avec décisions + actions
+     * - Musique continue (WebAudio) débloquée au premier geste
+     * - Hold final (sans barre de progression)
      *****************************************************************/
 
     /********************
      * CONFIG
      ********************/
-    const HOLD_DURATION_MS = 5500;
+    const HOLD_DURATION_MS = 5200;
 
     const urlParams = new URLSearchParams(location.search);
-    const SESSION_ID = urlParams.get("sid"); // optional
+    const SESSION_ID = urlParams.get("sid"); // optionnel
     const STORAGE_KEY_DONE = "valentine_done";
     const STORAGE_KEY_TIME = "valentine_time";
     const STORAGE_KEY_SID_USED_PREFIX = "valentine_sid_used_";
@@ -489,75 +466,111 @@
     const supportsVibrate = "vibrate" in navigator;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-    // Branch flags (decisions)
     const Branch = {
-      openingChoice: null, // "now" | "later"
-      moodChoice: null     // "thrill" | "soft"
+      moodChoice: null,      // "soft" | "thrill"
+      softVibe: null,        // "tendre" | "rire"
+      thrillDoor: null       // "a" | "b" | "c"
     };
 
-    // Script blocks (you can edit freely)
+    /********************
+     * SCRIPT (avec tes blocs exacts)
+     ********************/
     const SCRIPT = {
       BOOT: [
         { atMs: 200,  t: "Toucher l’écran." },
         { atMs: 1200, t: "Juste une fois." },
         { atMs: 2400, t: "Et tout commence." },
       ],
+
       CLOCK: [
         { atMs: 700,  t: "Il est exactement {TIME}." },
-        { atMs: 5200, t: "Ce moment est réel." },
-        { atMs: 9200, t: "Avant d’aller plus loin…" },
-        { atMs: 12400, t: "Tu veux ouvrir ça maintenant, ou plus tard ?" },
+        { atMs: 5200, t: "À l’instant où tu lis ces mots, le temps continue d’avancer." },
+        { atMs: 11200, t: "Mais ce moment précis... personne d’autre ne le vit comme toi." },
       ],
-      AFTER_NOW: [
-        { atMs: 800,  t: "Ok." },
-        { atMs: 3200, t: "Alors on le vit maintenant." },
-        { atMs: 7000, t: "Sans recul. Sans filtre." },
+
+      PRESENCE: [
+        { atMs: 700,  t: "Tu n’es pas arrivée ici par hasard." },
+        { atMs: 4200, t: "Tu aurais pu ouvrir ce lien plus tard." },
+        { atMs: 8200, t: "Mais tu es là." },
+        { atMs: 11800, t: "Et à cet instant précis, quelqu’un a pensé à toi en créant ce moment." },
       ],
-      AFTER_LATER: [
-        { atMs: 800,  t: "Je comprends." },
-        { atMs: 3400, t: "Mais on est déjà ici." },
-        { atMs: 7600, t: "Alors… autant le vivre pleinement." },
+
+      FUTURE: [
+        { atMs: 700,  t: "Imagine un futur." },
+        { atMs: 3600, t: "Pas un futur parfait. Pas un futur idéalisé." },
+        { atMs: 8200, t: "Un futur simple." },
+        { atMs: 12200, t: "Un voyage décidé sur un coup de tête." },
+        { atMs: 16400, t: "Des conversations tard dans la nuit." },
+        { atMs: 20600, t: "Des silences confortables." },
+        { atMs: 24800, t: "Des projets qui se construisent doucement." },
+        { atMs: 29600, t: "Ce futur n’existe pas encore." },
+        { atMs: 33800, t: "Il est seulement possible." },
+        { atMs: 38500, t: "Tout ce que tu viens de lire dépend d’un seul choix." },
       ],
-      HEARTS_ACTION: [
-        { atMs: 500,  t: "Attrape 3 cœurs." },
-        { atMs: 3400, t: "Pas pour jouer." },
-        { atMs: 6200, t: "Pour prouver que tu es vraiment là." },
-      ],
+
       MOOD_CHOICE: [
-        { atMs: 800,  t: "Maintenant, choisis le mood." },
-        { atMs: 4200, t: "Tu veux…" },
+        { atMs: 700,  t: "Maintenant, choisis." },
+        { atMs: 5200, t: "Douceur… ou frisson ?" },
       ],
-      THRILL_PATH: [
-        { atMs: 700,  t: "Ok. On prend le frisson." },
-        { atMs: 4200, t: "Le genre de frisson qui fait battre le cœur un peu trop vite." },
-        { atMs: 9800, t: "Et qui rend la suite… plus intense." },
+
+      SOFT_INTRO: [
+        { atMs: 700,  t: "Ok." },
+        { atMs: 3600, t: "On prend la douceur." },
+        { atMs: 8200, t: "Mais pas une douceur vide." },
+        { atMs: 12200, t: "Une douceur qui se construit." },
       ],
-      SOFT_PATH: [
-        { atMs: 700,  t: "Ok. On prend la douceur." },
-        { atMs: 4200, t: "Le genre de douceur qui calme tout, même quand la vie est bruyante." },
-        { atMs: 9800, t: "Et qui rend la suite… plus vraie." },
+
+      THRILL_INTRO: [
+        { atMs: 700,  t: "Ok." },
+        { atMs: 3600, t: "On prend le frisson." },
+        { atMs: 8200, t: "Le bon frisson." },
+        { atMs: 12200, t: "Celui qui réveille." },
       ],
-      DRAG_ACTION: [
-        { atMs: 600,  t: "Glisse le cœur dans le cadenas." },
-        { atMs: 4200, t: "Quand tu l’auras fait… tu comprendras." },
+
+      SOFT_DECISION: [
+        { atMs: 700,  t: "Choisis une intention." },
+        { atMs: 4200, t: "Pas pour répondre “bien”." },
+        { atMs: 7800, t: "Pour orienter la suite." },
       ],
-      HOLD_GATE: [
-        { atMs: 700,  t: "Dernière étape." },
-        { atMs: 4200, t: "Maintiens ton doigt ici." },
-        { atMs: 7800, t: "Ce moment n’existera qu’une seule fois." },
+
+      SOFT_ACTION: [
+        { atMs: 700,  t: "Action douce : ramasse 4 pétales." },
+        { atMs: 4200, t: "Chaque pétale, c’est une intention tenue." },
       ],
+
+      THRILL_DECISION: [
+        { atMs: 700,  t: "Choisis une porte." },
+        { atMs: 4200, t: "Tu peux te tromper." },
+        { atMs: 7600, t: "Mais tu ne peux pas tricher." },
+      ],
+
+      THRILL_ACTION: [
+        { atMs: 700,  t: "Action frisson : tape sur le battement." },
+        { atMs: 4200, t: "3 fois, pile au bon moment." },
+      ],
+
+      MERGE_GATE: [
+        { atMs: 700,  t: "Stop." },
+        { atMs: 4200, t: "Avant la vérité, un dernier geste." },
+        { atMs: 8200, t: "Garde ton doigt ici." },
+      ],
+
       TRUTH: [
         { atMs: 700,  t: "Je vais être simple." },
-        { atMs: 4200, t: "J’aime passer du temps avec toi." },
-        { atMs: 9000, t: "J’aime ce que tu dégages. Et la façon dont tu vois la vie." },
-        { atMs: 14200, t: "Je me vois avancer avec toi." },
-        { atMs: 18600, t: "Construire quelque chose. Voyager. Créer des souvenirs." },
-        { atMs: 24200, t: "Alors je vais te demander un truc, clairement." },
+        { atMs: 4200, t: "Je t’apprécie beaucoup." },
+        { atMs: 9000, t: "J’aime passer du temps avec toi." },
+        { atMs: 14200, t: "Je me vois avancer avec toi dans le futur." },
+        { atMs: 18600, t: "On a la même vision de comment on veut faire nos vies." },
+        { atMs: 23200, t: "Et j’ai envie de faire plein de choses avec toi. Voyager, rire, construire." },
+        { atMs: 28200, t: "Ça fait un moment qu’on parle." },
+        { atMs: 31800, t: "Et chaque moment me confirme que j’ai envie que ce soit officiel." },
       ],
+
       QUESTION: [
         { atMs: 800, t: "Est-ce que tu veux être ma Valentine ?" },
         { atMs: 5200, t: "Choisis avec ton cœur." },
       ],
+
       ENDING: [
         { atMs: 900,  t: "Fin du jeu." },
         { atMs: 4200, t: "Ce choix a été fait à {STAMP}." },
@@ -574,25 +587,23 @@
     const badgeText = document.getElementById("badgeText");
     const dot = document.getElementById("dot");
     const lines = document.getElementById("lines");
-
     const choiceActions = document.getElementById("choiceActions");
+    const footLeft = document.getElementById("footLeft");
+    const footRight = document.getElementById("footRight");
+    const rain = document.getElementById("rain");
 
-    const heartsZone = document.getElementById("heartsZone");
-    const heartsHint = document.getElementById("heartsHint");
+    const softZone = document.getElementById("softZone");
+    const softHint = document.getElementById("softHint");
 
-    const dragZone = document.getElementById("dragZone");
-    const dragHeart = document.getElementById("dragHeart");
-    const lockTarget = document.getElementById("lockTarget");
+    const thrillZone = document.getElementById("thrillZone");
+    const beatBtn = document.getElementById("beatBtn");
+    const thrillScore = document.getElementById("thrillScore");
+    const thrillWindow = document.getElementById("thrillWindow");
+    const thrillHint = document.getElementById("thrillHint");
 
     const holdWrap = document.getElementById("holdWrap");
     const holdBtn = document.getElementById("holdBtn");
     const holdHint = document.getElementById("holdHint");
-    const ringProg = document.getElementById("ringProg");
-
-    const rain = document.getElementById("rain");
-
-    const footLeft = document.getElementById("footLeft");
-    const footRight = document.getElementById("footRight");
 
     /********************
      * UTIL
@@ -610,9 +621,9 @@
       else dot.style.background = "var(--hot)";
     }
     function clearLines(){ lines.innerHTML = ""; }
-    function addLine(text, muted=false){
+    function addLine(text){
       const p = document.createElement("p");
-      p.className = "line" + (muted ? " muted" : "");
+      p.className = "line";
       p.textContent = text;
       lines.appendChild(p);
       requestAnimationFrame(()=>p.classList.add("show"));
@@ -682,7 +693,7 @@
     }
 
     /********************
-     * AUDIO — continuous background music
+     * AUDIO (musique continue)
      ********************/
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     const supportsWebAudio = !!AudioCtx;
@@ -691,13 +702,11 @@
       let ctx=null, master=null;
       let unlocked=false;
 
-      // music nodes
       let padGain=null, leadGain=null;
       let padOscs=[], padLfo=null, padLfoGain=null;
       let delay=null, delayGain=null;
       let clickBus=null;
 
-      // mode
       let mode="soft"; // "soft" | "thrill"
 
       function ensure(){
@@ -709,36 +718,30 @@
         master.gain.value = 0.0001;
         master.connect(ctx.destination);
 
-        // pad bus
         padGain = ctx.createGain();
         padGain.gain.value = 0.0001;
         padGain.connect(master);
 
-        // lead bus
         leadGain = ctx.createGain();
         leadGain.gain.value = 0.0001;
         leadGain.connect(master);
 
-        // simple delay for space
         delay = ctx.createDelay(1.0);
         delay.delayTime.value = 0.22;
         delayGain = ctx.createGain();
         delayGain.gain.value = 0.20;
         delay.connect(delayGain).connect(master);
 
-        // click bus
         clickBus = ctx.createGain();
         clickBus.gain.value = 0.10;
         clickBus.connect(master);
 
-        // LFO for pad shimmer
         padLfo = ctx.createOscillator();
         padLfo.type = "sine";
         padLfo.frequency.value = 0.12;
         padLfoGain = ctx.createGain();
-        padLfoGain.gain.value = 6.0; // cents-ish modulation
+        padLfoGain.gain.value = 6.0;
         padLfo.connect(padLfoGain);
-
         padLfo.start();
 
         return ctx;
@@ -751,7 +754,6 @@
           if (ctx.state !== "running") await ctx.resume();
           unlocked = true;
           master.gain.setTargetAtTime(0.20, ctx.currentTime, 0.06);
-          // start music if not started
           startMusic();
           return true;
         } catch {
@@ -759,19 +761,23 @@
         }
       }
 
+      function getChord(m){
+        const root = (m === "thrill") ? 220 : 246.94;
+        if (m === "thrill"){
+          return [root, root*Math.pow(2, 3/12), root*Math.pow(2, 7/12), root*Math.pow(2, 10/12)];
+        }
+        return [root, root*Math.pow(2, 4/12), root*Math.pow(2, 7/12), root*Math.pow(2, 11/12)];
+      }
+
       function startMusic(){
         if (!ctx || !unlocked) return;
         if (padOscs.length) return;
 
-        // Base chord (will retune on mode switch)
-        const chord = getChord(mode, 0); // root chord
-        padOscs = chord.map((freq, i) => {
+        const chord = getChord(mode);
+        padOscs = chord.map((freq) => {
           const o = ctx.createOscillator();
           o.type = "sine";
           o.frequency.value = freq;
-          // shimmer: very small detune via LFO
-          const det = ctx.createGain();
-          det.gain.value = 2.5;
           padLfoGain.connect(o.detune);
           o.connect(padGain);
           o.connect(delay);
@@ -779,34 +785,16 @@
           return o;
         });
 
-        // slow breathing pad volume
         padGain.gain.setTargetAtTime(0.055, ctx.currentTime, 0.25);
         leadGain.gain.setTargetAtTime(0.020, ctx.currentTime, 0.25);
 
-        // subtle lead plucks every few seconds
         scheduleLead();
-      }
-
-      function getChord(m, step){
-        // soft: major-ish; thrill: minor-ish
-        // Use A as reference for pleasant mid range
-        const A4 = 440;
-        const root = (m === "thrill") ? 220 : 246.94; // A3 vs B3-ish
-        // simple triad + 7th
-        if (m === "thrill"){
-          // minor 7
-          return [root, root*Math.pow(2, 3/12), root*Math.pow(2, 7/12), root*Math.pow(2, 10/12)];
-        } else {
-          // major 7
-          return [root, root*Math.pow(2, 4/12), root*Math.pow(2, 7/12), root*Math.pow(2, 11/12)];
-        }
       }
 
       function scheduleLead(){
         if (!ctx || !unlocked) return;
 
-        // gentle random arpeggio
-        const notes = getChord(mode, 0);
+        const notes = getChord(mode);
         const pick = notes[Math.floor(Math.random()*notes.length)];
         const o = ctx.createOscillator();
         o.type = "triangle";
@@ -825,25 +813,23 @@
         o.start(t);
         o.stop(t + 0.55);
 
-        setTimeout(scheduleLead, (mode === "thrill" ? 1900 : 2600) + Math.random()*900);
+        setTimeout(scheduleLead, (mode === "thrill" ? 1700 : 2400) + Math.random()*900);
       }
 
       function setMode(newMode){
         mode = newMode;
         if (!ctx || !unlocked) return;
 
-        // retune pad oscillators smoothly
-        const chord = getChord(mode, 0);
+        const chord = getChord(mode);
         padOscs.forEach((o, i) => {
           if (!chord[i]) return;
           o.frequency.setTargetAtTime(chord[i], ctx.currentTime, 0.15);
         });
 
-        // change space + intensity
         if (mode === "thrill"){
-          padGain.gain.setTargetAtTime(0.060, ctx.currentTime, 0.25);
-          leadGain.gain.setTargetAtTime(0.028, ctx.currentTime, 0.25);
-          delayGain.gain.setTargetAtTime(0.26, ctx.currentTime, 0.20);
+          padGain.gain.setTargetAtTime(0.062, ctx.currentTime, 0.25);
+          leadGain.gain.setTargetAtTime(0.030, ctx.currentTime, 0.25);
+          delayGain.gain.setTargetAtTime(0.28, ctx.currentTime, 0.20);
         } else {
           padGain.gain.setTargetAtTime(0.052, ctx.currentTime, 0.25);
           leadGain.gain.setTargetAtTime(0.020, ctx.currentTime, 0.25);
@@ -871,7 +857,7 @@
 
       function chime(){
         if (!ctx || !unlocked) return;
-        const base = 523.25; // C5
+        const base = 523.25;
         const o1 = ctx.createOscillator();
         const o2 = ctx.createOscillator();
         o1.type = "sine"; o2.type = "sine";
@@ -893,15 +879,7 @@
         o1.stop(t + 1.25); o2.stop(t + 1.25);
       }
 
-      function fadeMaster(to, time=0.12){
-        if (!ctx || !master) return;
-        master.gain.setTargetAtTime(to, ctx.currentTime, time);
-      }
-
-      return {
-        ensure, unlock, setMode, click, chime, fadeMaster,
-        get unlocked(){ return unlocked; }
-      };
+      return { ensure, unlock, setMode, click, chime, get unlocked(){ return unlocked; } };
     })();
 
     /********************
@@ -916,7 +894,6 @@
       const update = () => {
         const now = new Date();
         clockEl.textContent = formatTime(now);
-        // tiny minute feedback
         if (now.getSeconds() === 0){
           if (!vib([10]) && isIOS) iosHapticFallback();
         }
@@ -935,16 +912,24 @@
     const STATES = {
       BOOT:"BOOT",
       CLOCK:"CLOCK",
-      AFTER_OPEN:"AFTER_OPEN",
-      HEARTS:"HEARTS",
+      PRESENCE:"PRESENCE",
+      FUTURE:"FUTURE",
       MOOD:"MOOD",
-      PATH:"PATH",
-      DRAG:"DRAG",
-      HOLD:"HOLD",
+
+      SOFT_INTRO:"SOFT_INTRO",
+      SOFT_DECISION:"SOFT_DECISION",
+      SOFT_ACTION:"SOFT_ACTION",
+
+      THRILL_INTRO:"THRILL_INTRO",
+      THRILL_DECISION:"THRILL_DECISION",
+      THRILL_ACTION:"THRILL_ACTION",
+
+      MERGE_GATE:"MERGE_GATE",
       TRUTH:"TRUTH",
       QUESTION:"QUESTION",
       ENDING:"ENDING",
     };
+
     let state = STATES.BOOT;
     let timeline = null;
     let nextTimer = null;
@@ -961,13 +946,11 @@
       fade.classList.remove("hide");
       setTimeout(()=>{ cb(); fade.classList.add("hide"); }, 520);
     }
-
     function transitionTo(s){
-      exitState(state);
+      exitState();
       state = s;
-      enterState(state);
+      enterState(s);
     }
-
     function scheduleNext(ms){
       if (!ms || ms <= 0) return;
       nextTimer = setTimeout(()=>dispatch({type:"NEXT"}), ms);
@@ -976,53 +959,98 @@
     function dispatch(evt){
       switch(state){
         case STATES.BOOT:
-          if (evt.type==="START") transitionTo(STATES.CLOCK);
+          if (evt.type==="START") fadeCut(()=>transitionTo(STATES.CLOCK));
           break;
+
         case STATES.CLOCK:
-          if (evt.type==="OPEN_CHOICE") transitionTo(STATES.AFTER_OPEN);
+          if (evt.type==="NEXT") fadeCut(()=>transitionTo(STATES.PRESENCE));
           break;
-        case STATES.AFTER_OPEN:
-          if (evt.type==="NEXT") transitionTo(STATES.HEARTS);
+
+        case STATES.PRESENCE:
+          if (evt.type==="NEXT") fadeCut(()=>transitionTo(STATES.FUTURE));
           break;
-        case STATES.HEARTS:
-          if (evt.type==="HEARTS_DONE") transitionTo(STATES.MOOD);
+
+        case STATES.FUTURE:
+          if (evt.type==="NEXT") fadeCut(()=>transitionTo(STATES.MOOD));
           break;
+
         case STATES.MOOD:
-          if (evt.type==="MOOD_CHOICE") transitionTo(STATES.PATH);
+          if (evt.type==="CHOOSE_SOFT") fadeCut(()=>transitionTo(STATES.SOFT_INTRO));
+          if (evt.type==="CHOOSE_THRILL") fadeCut(()=>transitionTo(STATES.THRILL_INTRO));
           break;
-        case STATES.PATH:
-          if (evt.type==="NEXT") transitionTo(STATES.DRAG);
+
+        case STATES.SOFT_INTRO:
+          if (evt.type==="NEXT") fadeCut(()=>transitionTo(STATES.SOFT_DECISION));
           break;
-        case STATES.DRAG:
-          if (evt.type==="DRAG_DONE") transitionTo(STATES.HOLD);
+
+        case STATES.SOFT_DECISION:
+          if (evt.type==="SOFT_PICKED") fadeCut(()=>transitionTo(STATES.SOFT_ACTION));
           break;
-        case STATES.HOLD:
-          if (evt.type==="HOLD_SUCCESS") transitionTo(STATES.TRUTH);
+
+        case STATES.SOFT_ACTION:
+          if (evt.type==="SOFT_DONE") fadeCut(()=>transitionTo(STATES.MERGE_GATE));
+          break;
+
+        case STATES.THRILL_INTRO:
+          if (evt.type==="NEXT") fadeCut(()=>transitionTo(STATES.THRILL_DECISION));
+          break;
+
+        case STATES.THRILL_DECISION:
+          if (evt.type==="THRILL_PICKED") fadeCut(()=>transitionTo(STATES.THRILL_ACTION));
+          break;
+
+        case STATES.THRILL_ACTION:
+          if (evt.type==="THRILL_DONE") fadeCut(()=>transitionTo(STATES.MERGE_GATE));
+          break;
+
+        case STATES.MERGE_GATE:
+          if (evt.type==="HOLD_SUCCESS") fadeCut(()=>transitionTo(STATES.TRUTH));
           if (evt.type==="HOLD_CANCEL") holdHint.classList.add("show");
           break;
+
         case STATES.TRUTH:
-          if (evt.type==="NEXT") transitionTo(STATES.QUESTION);
+          if (evt.type==="NEXT") fadeCut(()=>transitionTo(STATES.QUESTION));
           break;
+
         case STATES.QUESTION:
-          if (evt.type==="ANSWER_YES") transitionTo(STATES.ENDING);
+          if (evt.type==="ANSWER_YES") fadeCut(()=>transitionTo(STATES.ENDING));
           break;
+
         case STATES.ENDING:
           if (evt.type==="RESET") hardReset();
           break;
       }
     }
 
-    function exitState(s){
+    function exitState(){
       clearTimers();
       choiceActions.style.display = "none";
       choiceActions.innerHTML = "";
-      heartsZone.style.display = "none";
-      heartsHint.style.display = "none";
-      dragZone.style.display = "none";
+
+      softZone.style.display = "none";
+      softZone.innerHTML = "";
+      softHint.style.display = "none";
+      softHint.textContent = "";
+
+      stopThrillGame();
+      thrillZone.style.display = "none";
+
       holdWrap.style.display = "none";
       holdHint.classList.remove("show");
-      ringSet(0);
+
       setDot("accent");
+    }
+
+    function showChoices(btns){
+      choiceActions.style.display = "flex";
+      choiceActions.innerHTML = "";
+      btns.forEach(b => {
+        const el = document.createElement("button");
+        el.textContent = b.label;
+        if (b.cls) el.classList.add(b.cls);
+        el.addEventListener("click", b.onClick);
+        choiceActions.appendChild(el);
+      });
     }
 
     function enterState(s){
@@ -1040,161 +1068,205 @@
       }
 
       if (s === STATES.CLOCK){
-        footLeft.textContent = "Décision 1 : maintenant ou plus tard.";
+        footLeft.textContent = "Le temps, en direct.";
         startClock({soft:true, frozen:false});
-
         timeline = buildTimeline(SCRIPT.CLOCK);
         timeline.start();
-
-        // After the last line, show choices
-        setTimeout(() => {
-          showChoices([
-            {
-              label: "Maintenant",
-              cls: "primary",
-              onClick: () => {
-                Branch.openingChoice = "now";
-                AudioEngine.click();
-                haptic([12,40,12]);
-                dispatch({type:"OPEN_CHOICE"});
-              }
-            },
-            {
-              label: "Plus tard",
-              cls: "soft",
-              onClick: () => {
-                Branch.openingChoice = "later";
-                AudioEngine.click();
-                haptic([10]);
-                dispatch({type:"OPEN_CHOICE"});
-              }
-            }
-          ]);
-        }, 12800);
+        scheduleNext(13500);
         return;
       }
 
-      if (s === STATES.AFTER_OPEN){
-        footLeft.textContent = "On avance.";
+      if (s === STATES.PRESENCE){
+        footLeft.textContent = "Présence.";
         startClock({soft:true, frozen:false});
-        const block = (Branch.openingChoice === "now") ? SCRIPT.AFTER_NOW : SCRIPT.AFTER_LATER;
-        timeline = buildTimeline(block);
+        timeline = buildTimeline(SCRIPT.PRESENCE);
         timeline.start();
-        scheduleNext(10500);
+        scheduleNext(14500);
         return;
       }
 
-      if (s === STATES.HEARTS){
-        footLeft.textContent = "Action : attrape 3 cœurs.";
+      if (s === STATES.FUTURE){
+        footLeft.textContent = "Futur possible.";
         startClock({soft:true, frozen:false});
-
-        timeline = buildTimeline(SCRIPT.HEARTS_ACTION);
+        timeline = buildTimeline(SCRIPT.FUTURE);
         timeline.start();
-
-        heartsZone.style.display = "block";
-        heartsHint.style.display = "block";
-        heartsHint.textContent = "Attrape 3 cœurs pour continuer.";
-
-        startHeartsMiniGame();
+        scheduleNext(40500);
         return;
       }
 
       if (s === STATES.MOOD){
-        footLeft.textContent = "Décision 2 : frisson ou douceur.";
+        footLeft.textContent = "Décision : douceur ou frisson.";
         startClock({soft:true, frozen:false});
-
         timeline = buildTimeline(SCRIPT.MOOD_CHOICE);
         timeline.start();
 
         setTimeout(() => {
           showChoices([
             {
-              label:"Frisson",
-              cls:"primary",
-              onClick: () => {
-                Branch.moodChoice = "thrill";
-                AudioEngine.setMode("thrill");
-                haptic([20,50,20]);
-                AudioEngine.click();
-                dispatch({type:"MOOD_CHOICE"});
-              }
-            },
-            {
               label:"Douceur",
               cls:"soft",
               onClick: () => {
                 Branch.moodChoice = "soft";
                 AudioEngine.setMode("soft");
-                haptic([10]);
                 AudioEngine.click();
-                dispatch({type:"MOOD_CHOICE"});
+                haptic([10]);
+                dispatch({type:"CHOOSE_SOFT"});
               }
             },
+            {
+              label:"Frisson",
+              cls:"primary",
+              onClick: () => {
+                Branch.moodChoice = "thrill";
+                AudioEngine.setMode("thrill");
+                AudioEngine.click();
+                haptic([20,50,20]);
+                dispatch({type:"CHOOSE_THRILL"});
+              }
+            }
           ]);
         }, 5200);
+
         return;
       }
 
-      if (s === STATES.PATH){
-        footLeft.textContent = "Le mood change la suite.";
+      if (s === STATES.SOFT_INTRO){
+        footLeft.textContent = "Parcours : douceur.";
         startClock({soft:true, frozen:false});
+        AudioEngine.setMode("soft");
+        grain.style.opacity = prefersReducedMotion ? "0.06" : "0.10";
+        timeline = buildTimeline(SCRIPT.SOFT_INTRO);
+        timeline.start();
+        scheduleNext(14000);
+        return;
+      }
 
-        const block = (Branch.moodChoice === "thrill") ? SCRIPT.THRILL_PATH : SCRIPT.SOFT_PATH;
-        timeline = buildTimeline(block);
+      if (s === STATES.SOFT_DECISION){
+        footLeft.textContent = "Décision (douceur).";
+        startClock({soft:true, frozen:false});
+        timeline = buildTimeline(SCRIPT.SOFT_DECISION);
         timeline.start();
 
-        // slight grain intensity on thrill
-        if (!prefersReducedMotion){
-          grain.style.opacity = (Branch.moodChoice === "thrill") ? "0.14" : "0.10";
-        }
+        setTimeout(() => {
+          showChoices([
+            {
+              label:"Tendre",
+              cls:"soft",
+              onClick: () => {
+                Branch.softVibe = "tendre";
+                AudioEngine.click();
+                haptic([10]);
+                addLine("Ok. Alors la suite sera plus calme… plus proche.");
+                dispatch({type:"SOFT_PICKED"});
+              }
+            },
+            {
+              label:"Rire",
+              cls:"primary",
+              onClick: () => {
+                Branch.softVibe = "rire";
+                AudioEngine.click();
+                haptic([12,40,12]);
+                addLine("Ok. Alors la suite sera plus légère… plus vivante.");
+                dispatch({type:"SOFT_PICKED"});
+              }
+            }
+          ]);
+        }, 8200);
 
-        scheduleNext(12000);
         return;
       }
 
-      if (s === STATES.DRAG){
-        footLeft.textContent = "Action : glisse le cœur dans le cadenas.";
+      if (s === STATES.SOFT_ACTION){
+        footLeft.textContent = "Action : pétales.";
         startClock({soft:true, frozen:false});
-
-        timeline = buildTimeline(SCRIPT.DRAG_ACTION);
+        timeline = buildTimeline(SCRIPT.SOFT_ACTION);
         timeline.start();
 
-        dragZone.style.display = "flex";
-        lockTarget.classList.remove("hit");
-        initDragToLock();
+        softZone.style.display = "block";
+        softHint.style.display = "block";
+        softHint.textContent = "Ramasse 4 pétales (🌸) pour continuer.";
+
+        startSoftPetalsGame();
         return;
       }
 
-      if (s === STATES.HOLD){
-        footLeft.textContent = "Moment unique.";
+      if (s === STATES.THRILL_INTRO){
+        footLeft.textContent = "Parcours : frisson.";
+        startClock({soft:true, frozen:false});
+        AudioEngine.setMode("thrill");
+        grain.style.opacity = prefersReducedMotion ? "0.06" : "0.14";
+        timeline = buildTimeline(SCRIPT.THRILL_INTRO);
+        timeline.start();
+        scheduleNext(14000);
+        return;
+      }
+
+      if (s === STATES.THRILL_DECISION){
+        footLeft.textContent = "Décision (frisson).";
+        startClock({soft:true, frozen:false});
+        timeline = buildTimeline(SCRIPT.THRILL_DECISION);
+        timeline.start();
+
+        setTimeout(() => {
+          showChoices([
+            {
+              label:"Porte A",
+              cls:"primary",
+              onClick: () => pickThrillDoor("a")
+            },
+            {
+              label:"Porte B",
+              cls:"soft",
+              onClick: () => pickThrillDoor("b")
+            },
+            {
+              label:"Porte C",
+              cls:"primary",
+              onClick: () => pickThrillDoor("c")
+            },
+          ]);
+        }, 7800);
+
+        return;
+      }
+
+      if (s === STATES.THRILL_ACTION){
+        footLeft.textContent = "Action : battement.";
+        startClock({soft:true, frozen:false});
+        timeline = buildTimeline(SCRIPT.THRILL_ACTION);
+        timeline.start();
+
+        thrillZone.style.display = "flex";
+        startThrillGame();
+        return;
+      }
+
+      if (s === STATES.MERGE_GATE){
+        footLeft.textContent = "Dernier geste.";
         startClock({soft:true, frozen:true});
-        timeline = buildTimeline(SCRIPT.HOLD_GATE);
+        timeline = buildTimeline(SCRIPT.MERGE_GATE);
         timeline.start();
 
         holdWrap.style.display = "flex";
         holdBtn.classList.add("pulse");
         holdHint.classList.remove("show");
-        ringSet(0);
         return;
       }
 
       if (s === STATES.TRUTH){
-        footLeft.textContent = "Juste la vérité.";
+        footLeft.textContent = "Vérité.";
         startClock({soft:true, frozen:false});
-
-        // calm mode at truth
         AudioEngine.setMode("soft");
-
         timeline = buildTimeline(SCRIPT.TRUTH);
         timeline.start();
-        scheduleNext(27000);
+        scheduleNext(33500);
         return;
       }
 
       if (s === STATES.QUESTION){
         footLeft.textContent = "La question.";
         startClock({soft:true, frozen:false});
-
         timeline = buildTimeline(SCRIPT.QUESTION);
         timeline.start();
 
@@ -1204,6 +1276,7 @@
             { label:"Oui, je le veux", cls:"soft", onClick: answerYes }
           ]);
         }, 5200);
+
         return;
       }
 
@@ -1219,38 +1292,18 @@
         if (SESSION_ID) localStorage.setItem(STORAGE_KEY_SID_USED_PREFIX + SESSION_ID, "true");
 
         setDot("good");
-
         timeline = buildTimeline(SCRIPT.ENDING, { stamp });
         timeline.start();
 
         AudioEngine.chime();
         heartsRain();
 
-        // optional reset button (discret)
         setTimeout(() => {
-          showChoices([
-            {
-              label:"Recommencer",
-              cls:"soft",
-              onClick: () => hardReset()
-            }
-          ]);
+          showChoices([{ label:"Recommencer", cls:"soft", onClick: hardReset }]);
         }, 9800);
 
         return;
       }
-    }
-
-    function showChoices(btns){
-      choiceActions.style.display = "flex";
-      choiceActions.innerHTML = "";
-      btns.forEach(b => {
-        const el = document.createElement("button");
-        el.textContent = b.label;
-        if (b.cls) el.classList.add(b.cls);
-        el.addEventListener("click", b.onClick);
-        choiceActions.appendChild(el);
-      });
     }
 
     /********************
@@ -1268,33 +1321,34 @@
       localStorage.removeItem(STORAGE_KEY_TIME);
       if (SESSION_ID) localStorage.removeItem(STORAGE_KEY_SID_USED_PREFIX + SESSION_ID);
       fadeCut(() => transitionTo(STATES.BOOT));
+      started = false;
+      footLeft.textContent = "Toucher l’écran pour démarrer (audio).";
     }
 
     /********************
-     * HEARTS MINIGAME (tap 3 hearts)
+     * SOFT GAME — pétales
      ********************/
-    let heartsCaught = 0;
-    let heartsRunning = false;
+    let softCaught = 0;
+    let softRunning = false;
 
     function rand(min,max){ return min + Math.random()*(max-min); }
 
-    function spawnHeart(){
-      if (!heartsRunning) return;
-      const h = document.createElement("div");
-      h.className = "heart";
-      h.innerHTML = "<span>❤</span>";
+    function spawnPetal(){
+      if (!softRunning) return;
+      const p = document.createElement("div");
+      p.className = "petal";
+      p.innerHTML = "<span>🌸</span>";
 
       const x = rand(12, 88);
-      const y = rand(22, 78);
-      h.style.left = x + "%";
-      h.style.top  = y + "%";
+      const y = rand(24, 78);
+      p.style.left = x + "%";
+      p.style.top  = y + "%";
 
-      // small drift animation via Web Animations
-      const dx = rand(-18, 18);
-      const dy = rand(-14, 14);
-      const dur = rand(1600, 2400);
+      const dx = rand(-16, 16);
+      const dy = rand(-12, 12);
+      const dur = rand(1700, 2500);
 
-      const anim = h.animate(
+      const anim = p.animate(
         [
           { transform:`translate(-50%,-50%) translate(0px,0px)` },
           { transform:`translate(-50%,-50%) translate(${dx}px,${dy}px)` }
@@ -1302,197 +1356,182 @@
         { duration: dur, direction:"alternate", iterations: Infinity, easing:"ease-in-out" }
       );
 
-      h.addEventListener("click", () => {
-        if (!heartsRunning) return;
-        heartsCaught++;
+      p.addEventListener("click", () => {
+        if (!softRunning) return;
+        softCaught++;
         AudioEngine.click();
         haptic([10]);
-        h.style.opacity = "0";
+
+        p.style.opacity = "0";
         anim.cancel();
-        setTimeout(()=>h.remove(), 150);
+        setTimeout(()=>p.remove(), 150);
 
-        heartsHint.textContent = `Cœurs attrapés : ${heartsCaught}/3`;
+        softHint.textContent = `Pétales : ${softCaught}/4`;
 
-        if (heartsCaught >= 3){
-          heartsRunning = false;
+        if (softCaught >= 4){
+          softRunning = false;
+
+          // petite “récompense” narrative liée au choix
+          if (Branch.softVibe === "tendre"){
+            addLine("Tu viens de choisir la douceur qui dure.");
+          } else {
+            addLine("Tu viens de choisir la douceur qui fait sourire.");
+          }
+
           setTimeout(() => {
-            heartsZone.innerHTML = "";
-            heartsZone.style.display = "none";
-            heartsHint.style.display = "none";
-            dispatch({type:"HEARTS_DONE"});
-          }, 350);
+            softZone.innerHTML = "";
+            softZone.style.display = "none";
+            softHint.style.display = "none";
+            dispatch({type:"SOFT_DONE"});
+          }, 650);
         } else {
-          spawnHeart();
+          spawnPetal();
         }
       });
 
-      heartsZone.appendChild(h);
+      softZone.appendChild(p);
     }
 
-    function startHeartsMiniGame(){
-      heartsCaught = 0;
-      heartsRunning = true;
-      heartsZone.innerHTML = "";
-      heartsHint.textContent = "Cœurs attrapés : 0/3";
-      spawnHeart();
-      spawnHeart();
-      spawnHeart();
-      // keep it not overwhelming: if user waits, hearts stay
+    function startSoftPetalsGame(){
+      softCaught = 0;
+      softRunning = true;
+      softZone.innerHTML = "";
+      softHint.textContent = "Pétales : 0/4";
+
+      // 3 au départ, puis on respawn au fur et à mesure
+      spawnPetal();
+      spawnPetal();
+      spawnPetal();
     }
 
     /********************
-     * DRAG HEART → LOCK
+     * THRILL — décision porte
      ********************/
-    let dragging = false;
-    let dragOffset = {x:0,y:0};
-    let dragStartRect = null;
+    function pickThrillDoor(door){
+      Branch.thrillDoor = door;
+      AudioEngine.click();
 
-    function rect(el){ return el.getBoundingClientRect(); }
+      // Une seule “bonne” porte, mais sans humilier : feedback + suspense + retry possible
+      const good = "b";
+      if (door !== good){
+        setDot("bad");
+        haptic([20,50,20]);
+        addLine("Mauvais choix.");
+        addLine("Pas grave. Recommence. Mais cette fois… écoute ton instinct.");
+        setTimeout(() => setDot("accent"), 900);
+        return;
+      }
 
-    function resetDragHeart(){
-      dragHeart.style.transform = "translate(0px,0px)";
-      dragHeart.dataset.tx = "0";
-      dragHeart.dataset.ty = "0";
+      setDot("good");
+      haptic([12,40,12]);
+      addLine("Ok. Tu as choisi la bonne porte.");
+      addLine("Maintenant, tu vas sentir le rythme.");
+
+      dispatch({type:"THRILL_PICKED"});
     }
 
-    function initDragToLock(){
-      resetDragHeart();
+    /********************
+     * THRILL GAME — rhythm tap
+     ********************/
+    let beatTimer = null;
+    let beatWindowTimer = null;
+    let beatOpen = false;
+    let streak = 0;
 
-      const onDown = (e) => {
-        e.preventDefault();
-        dragging = true;
+    function setBeatWindow(open){
+      beatOpen = open;
+      thrillWindow.textContent = open ? "Fenêtre : ouverte" : "Fenêtre : fermée";
+    }
+
+    function stopThrillGame(){
+      if (beatTimer) clearInterval(beatTimer);
+      if (beatWindowTimer) clearTimeout(beatWindowTimer);
+      beatTimer = null;
+      beatWindowTimer = null;
+      setBeatWindow(false);
+      streak = 0;
+      thrillScore.textContent = "Série : 0/3";
+      beatBtn.classList.remove("pulse");
+    }
+
+    function startThrillGame(){
+      stopThrillGame();
+      streak = 0;
+      thrillScore.textContent = "Série : 0/3";
+      setBeatWindow(false);
+      beatBtn.classList.add("pulse");
+
+      // battement (varie un peu pour le côté “vivant”)
+      beatTimer = setInterval(() => {
+        // ouvrir une petite fenêtre (220ms)
+        setBeatWindow(true);
+        if (supportsVibrate) vib([10]); // discret
+        beatWindowTimer = setTimeout(() => setBeatWindow(false), 220);
+      }, 780 + Math.floor(Math.random()*120));
+
+      beatBtn.onclick = () => {
         AudioEngine.click();
-        haptic([10]);
-        dragHeart.setPointerCapture?.(e.pointerId);
 
-        const r = rect(dragHeart);
-        dragStartRect = r;
-        const clientX = e.clientX ?? (e.touches?.[0]?.clientX);
-        const clientY = e.clientY ?? (e.touches?.[0]?.clientY);
-        dragOffset.x = clientX - r.left;
-        dragOffset.y = clientY - r.top;
-      };
-
-      const onMove = (e) => {
-        if (!dragging) return;
-        const clientX = e.clientX ?? (e.touches?.[0]?.clientX);
-        const clientY = e.clientY ?? (e.touches?.[0]?.clientY);
-        if (clientX == null || clientY == null) return;
-
-        const tx = clientX - dragStartRect.left - dragOffset.x;
-        const ty = clientY - dragStartRect.top - dragOffset.y;
-
-        dragHeart.style.transform = `translate(${tx}px, ${ty}px)`;
-        dragHeart.dataset.tx = String(tx);
-        dragHeart.dataset.ty = String(ty);
-
-        // check hit
-        const hr = rect(dragHeart);
-        const lr = rect(lockTarget);
-        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
-        lockTarget.classList.toggle("hit", hit);
-      };
-
-      const onUp = (e) => {
-        if (!dragging) return;
-        dragging = false;
-
-        const hr = rect(dragHeart);
-        const lr = rect(lockTarget);
-        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
-
-        if (hit){
-          lockTarget.classList.add("hit");
-          AudioEngine.chime();
-          haptic([20,50,20]);
-          // snap into place
-          fadeCut(() => {
-            dragZone.style.display = "none";
-            dispatch({type:"DRAG_DONE"});
-          });
-        } else {
-          lockTarget.classList.remove("hit");
-          // return back
-          AudioEngine.click();
+        if (!beatOpen){
+          streak = 0;
+          setDot("bad");
           haptic([10]);
-          resetDragHeart();
+          thrillScore.textContent = "Série : 0/3";
+          thrillHint.innerHTML = 'Objectif : <strong>3 taps</strong> pile au bon moment. Si tu rates, la série retombe.';
+          setTimeout(() => setDot("accent"), 700);
+          return;
+        }
+
+        // bon timing
+        streak++;
+        setDot("good");
+        haptic([10]);
+        thrillScore.textContent = `Série : ${streak}/3`;
+
+        if (streak === 1) thrillHint.textContent = "Encore deux. Ne te précipite pas.";
+        if (streak === 2) thrillHint.textContent = "Encore un. Respire.";
+        if (streak >= 3){
+          stopThrillGame();
+          AudioEngine.chime();
+          haptic([30,60,30]);
+          addLine("Ok. Tu l’as fait.");
+          addLine("Le frisson… maîtrisé.");
+          setTimeout(() => {
+            thrillZone.style.display = "none";
+            dispatch({type:"THRILL_DONE"});
+          }, 650);
         }
       };
-
-      // Clear old listeners by cloning node (simple safe)
-      const newNode = dragHeart.cloneNode(true);
-      dragHeart.parentNode.replaceChild(newNode, dragHeart);
-      // rebind global ref
-      window.__dragHeart = newNode;
-
-      // update variable reference
-      // (we keep a getter to avoid rewriting many)
-      Object.defineProperty(window, "dragHeartNode", { value: newNode });
-
-      newNode.addEventListener("pointerdown", onDown);
-      window.addEventListener("pointermove", onMove, { passive:false });
-      window.addEventListener("pointerup", onUp);
-      window.addEventListener("pointercancel", onUp);
     }
-
-    // Use current dragHeart element reference
-    // (simple mapping for other functions)
-    Object.defineProperty(window, "dragHeartEl", {
-      get(){ return window.__dragHeart || document.getElementById("dragHeart"); }
-    });
 
     /********************
-     * HOLD-TO-COMMIT
+     * HOLD FINAL (sans barre)
      ********************/
-    const RING_CIRC = 301.59;
-    function ringSet(p01){
-      const p = Math.max(0, Math.min(1, p01));
-      ringProg.style.strokeDashoffset = (RING_CIRC * (1 - p)).toFixed(2);
-    }
-
-    let holding=false;
-    let holdStart=0;
-    let holdRAF=null;
-    let hbTimer=null;
-
-    function startHeartbeatHaptics(){
-      stopHeartbeatHaptics();
-      hbTimer = setInterval(() => haptic([10]), 900);
-    }
-    function stopHeartbeatHaptics(){
-      if (hbTimer) clearInterval(hbTimer);
-      hbTimer = null;
-    }
+    let holding = false;
+    let holdRAF = null;
+    let holdStart = 0;
 
     function holdStartFn(){
-      if (state !== STATES.HOLD) return;
+      if (state !== STATES.MERGE_GATE) return;
       if (holding) return;
+
       holding = true;
       holdHint.classList.remove("show");
       holdStart = performance.now();
-      ringSet(0);
 
-      // Unlock audio if not already
-      AudioEngine.unlock().then(() => {
-        // in thrill mode, keep a tiny tension
-        if (Branch.moodChoice === "thrill") AudioEngine.setMode("thrill");
-        else AudioEngine.setMode("soft");
-      });
-
+      AudioEngine.unlock();
       AudioEngine.click();
-      startHeartbeatHaptics();
+      haptic([10]);
 
       const tick = () => {
         if (!holding) return;
         const elapsed = performance.now() - holdStart;
-        const p = elapsed / HOLD_DURATION_MS;
-        ringSet(p);
 
-        if (p >= 0.5 && p < 0.52){
-          haptic([20]);
-        }
+        // micro pulses très discrets
+        if (elapsed > 1400 && elapsed < 1500) haptic([10]);
+        if (elapsed > 2800 && elapsed < 2900) haptic([10]);
 
-        if (p >= 1){
+        if (elapsed >= HOLD_DURATION_MS){
           holdSuccessFn();
           return;
         }
@@ -1502,40 +1541,32 @@
     }
 
     function holdCancelFn(){
-      if (state !== STATES.HOLD) return;
+      if (state !== STATES.MERGE_GATE) return;
       if (!holding) return;
+
       holding = false;
       if (holdRAF) cancelAnimationFrame(holdRAF);
       holdRAF = null;
 
-      stopHeartbeatHaptics();
-      ringSet(0);
-
       holdHint.textContent = "Prends ton temps.";
       holdHint.classList.add("show");
       AudioEngine.click();
+      haptic([10]);
 
       dispatch({type:"HOLD_CANCEL"});
     }
 
     function holdSuccessFn(){
-      if (state !== STATES.HOLD) return;
+      if (state !== STATES.MERGE_GATE) return;
       holding = false;
       if (holdRAF) cancelAnimationFrame(holdRAF);
       holdRAF = null;
 
-      stopHeartbeatHaptics();
-      ringSet(1);
-
-      haptic([30,60,30]);
       AudioEngine.chime();
-      holdBtn.classList.remove("pulse");
+      haptic([30,60,30]);
       setDot("good");
 
-      fadeCut(() => {
-        startClock({soft:true, frozen:false});
-        dispatch({type:"HOLD_SUCCESS"});
-      });
+      dispatch({type:"HOLD_SUCCESS"});
     }
 
     holdBtn.addEventListener("pointerdown", (e)=>{ e.preventDefault(); holdStartFn(); });
@@ -1544,7 +1575,7 @@
     holdBtn.addEventListener("pointerleave", ()=>{ if (holding) holdCancelFn(); });
 
     /********************
-     * YES (final)
+     * YES
      ********************/
     function answerYes(){
       haptic([25]);
@@ -1562,7 +1593,7 @@
       rain.innerHTML = "";
       rain.classList.add("show");
       const symbols = ["❤","💗","💖","💕","💞"];
-      const count = 48;
+      const count = 52;
 
       for (let i=0;i<count;i++){
         const d = document.createElement("div");
@@ -1579,7 +1610,26 @@
     }
 
     /********************
-     * START (unlock audio on first gesture)
+     * START FIX (tap écran)
+     ********************/
+    let started = false;
+
+    function handleFirstTouch(){
+      if (started) return;
+      started = true;
+
+      AudioEngine.ensure();
+      AudioEngine.unlock();
+      AudioEngine.setMode("soft");
+      AudioEngine.click();
+      haptic([10]);
+
+      footLeft.textContent = "Ok. On commence.";
+      dispatch({type:"START"});
+    }
+
+    /********************
+     * INIT
      ********************/
     function init(){
       startClock({soft:true, frozen:false});
@@ -1589,7 +1639,6 @@
         grain.style.opacity = "0.06";
       }
 
-      // If already done or sid used, jump to ENDING (with stored time)
       if (alreadyDone() || hasUsedSession()){
         fade.classList.add("hide");
         transitionTo(STATES.ENDING);
@@ -1599,6 +1648,7 @@
           const d = new Date(iso);
           const stamp = formatStamp(d);
           clearLines();
+          if (timeline) timeline.stop();
           timeline = buildTimeline(SCRIPT.ENDING, { stamp });
           timeline.start();
         }
@@ -1607,310 +1657,41 @@
 
       transitionTo(STATES.BOOT);
       fade.classList.add("hide");
+      footRight.textContent = supportsWebAudio ? "Musique prête" : "Audio non supporté";
 
-      // First gesture anywhere to unlock + start
-      const startHandler = async () => {
-        document.removeEventListener("pointerdown", startHandler, { capture:true });
-        await AudioEngine.unlock();
-        AudioEngine.setMode("soft");
-        AudioEngine.click();
-        haptic([10]);
-        fadeCut(() => dispatch({type:"START"}));
-      };
-
-      document.addEventListener("pointerdown", startHandler, { capture:true });
+      document.addEventListener("pointerdown", handleFirstTouch, { passive:true });
     }
 
-    // State enter logic that needs buttons/actions to appear
-    function enterState(s){
-      // (redefined here to keep single definition readable)
-      // This wrapper calls the earlier enterState defined above.
-    }
-
-    // We already defined enterState above; keep it.
-    // Just run init.
-    setTimeout(init, 20);
-
-    // Fix: override drag references after cloning
-    // Ensure drag init uses live element
-    function initDragToLock(){
-      // restore reference each time
-      const current = document.getElementById("dragHeart");
-      // clone to remove previous listeners
-      const newNode = current.cloneNode(true);
-      current.parentNode.replaceChild(newNode, current);
-
-      // update ids for safety
-      newNode.id = "dragHeart";
-
-      // local helpers
-      let draggingLocal = false;
-      let dragOffsetLocal = {x:0,y:0};
-      let startRect = null;
-
-      const onDown = (e) => {
-        e.preventDefault();
-        draggingLocal = true;
-        AudioEngine.click();
-        haptic([10]);
-        newNode.setPointerCapture?.(e.pointerId);
-
-        startRect = newNode.getBoundingClientRect();
-        dragOffsetLocal.x = e.clientX - startRect.left;
-        dragOffsetLocal.y = e.clientY - startRect.top;
-      };
-
-      const onMove = (e) => {
-        if (!draggingLocal) return;
-        const tx = e.clientX - startRect.left - dragOffsetLocal.x;
-        const ty = e.clientY - startRect.top - dragOffsetLocal.y;
-
-        newNode.style.transform = `translate(${tx}px, ${ty}px)`;
-
-        const hr = newNode.getBoundingClientRect();
-        const lr = lockTarget.getBoundingClientRect();
-        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
-        lockTarget.classList.toggle("hit", hit);
-      };
-
-      const onUp = () => {
-        if (!draggingLocal) return;
-        draggingLocal = false;
-
-        const hr = newNode.getBoundingClientRect();
-        const lr = lockTarget.getBoundingClientRect();
-        const hit = !(hr.right < lr.left || hr.left > lr.right || hr.bottom < lr.top || hr.top > lr.bottom);
-
-        if (hit){
-          lockTarget.classList.add("hit");
-          AudioEngine.chime();
-          haptic([20,50,20]);
-          fadeCut(() => {
-            dragZone.style.display = "none";
-            dispatch({type:"DRAG_DONE"});
-          });
-        } else {
-          lockTarget.classList.remove("hit");
-          AudioEngine.click();
-          haptic([10]);
-          newNode.style.transform = "translate(0px,0px)";
-        }
-      };
-
-      newNode.addEventListener("pointerdown", onDown);
-      window.addEventListener("pointermove", onMove, { passive:false });
-      window.addEventListener("pointerup", onUp);
-      window.addEventListener("pointercancel", onUp);
-    }
-
-    // Re-declare enterState with access to initDragToLock above (same logic, but now it calls the corrected initDragToLock)
-    const _enterState = (function(){
-      return function(s){
-        clearLines();
-        setBadge(s);
-
-        // hide sections
-        choiceActions.style.display = "none";
-        choiceActions.innerHTML = "";
-        heartsZone.style.display = "none";
-        heartsHint.style.display = "none";
-        dragZone.style.display = "none";
-        holdWrap.style.display = "none";
-        holdHint.classList.remove("show");
-        ringSet(0);
-        setDot("accent");
-
-        if (s === STATES.BOOT){
-          footLeft.textContent = "Toucher l’écran pour démarrer (audio).";
-          footRight.textContent = supportsWebAudio ? "Musique prête" : "Audio non supporté";
-          startClock({soft:true, frozen:false});
-          AudioEngine.ensure();
-          timeline = buildTimeline(SCRIPT.BOOT);
-          timeline.start();
-          return;
-        }
-
-        if (s === STATES.CLOCK){
-          footLeft.textContent = "Décision 1 : maintenant ou plus tard.";
-          startClock({soft:true, frozen:false});
-          timeline = buildTimeline(SCRIPT.CLOCK);
-          timeline.start();
-
-          setTimeout(() => {
-            showChoices([
-              { label:"Maintenant", cls:"primary", onClick: () => { Branch.openingChoice="now"; AudioEngine.click(); haptic([12,40,12]); dispatch({type:"OPEN_CHOICE"}); } },
-              { label:"Plus tard", cls:"soft", onClick: () => { Branch.openingChoice="later"; AudioEngine.click(); haptic([10]); dispatch({type:"OPEN_CHOICE"}); } },
-            ]);
-          }, 12800);
-          return;
-        }
-
-        if (s === STATES.AFTER_OPEN){
-          footLeft.textContent = "On avance.";
-          startClock({soft:true, frozen:false});
-          const block = (Branch.openingChoice === "now") ? SCRIPT.AFTER_NOW : SCRIPT.AFTER_LATER;
-          timeline = buildTimeline(block);
-          timeline.start();
-          scheduleNext(10500);
-          return;
-        }
-
-        if (s === STATES.HEARTS){
-          footLeft.textContent = "Action : attrape 3 cœurs.";
-          startClock({soft:true, frozen:false});
-          timeline = buildTimeline(SCRIPT.HEARTS_ACTION);
-          timeline.start();
-          heartsZone.style.display = "block";
-          heartsHint.style.display = "block";
-          startHeartsMiniGame();
-          return;
-        }
-
-        if (s === STATES.MOOD){
-          footLeft.textContent = "Décision 2 : frisson ou douceur.";
-          startClock({soft:true, frozen:false});
-          timeline = buildTimeline(SCRIPT.MOOD_CHOICE);
-          timeline.start();
-
-          setTimeout(() => {
-            showChoices([
-              { label:"Frisson", cls:"primary", onClick: () => { Branch.moodChoice="thrill"; AudioEngine.setMode("thrill"); haptic([20,50,20]); AudioEngine.click(); dispatch({type:"MOOD_CHOICE"}); } },
-              { label:"Douceur", cls:"soft", onClick: () => { Branch.moodChoice="soft"; AudioEngine.setMode("soft"); haptic([10]); AudioEngine.click(); dispatch({type:"MOOD_CHOICE"}); } },
-            ]);
-          }, 5200);
-          return;
-        }
-
-        if (s === STATES.PATH){
-          footLeft.textContent = "Le mood change la suite.";
-          startClock({soft:true, frozen:false});
-          const block = (Branch.moodChoice === "thrill") ? SCRIPT.THRILL_PATH : SCRIPT.SOFT_PATH;
-          timeline = buildTimeline(block);
-          timeline.start();
-          if (!prefersReducedMotion){
-            grain.style.opacity = (Branch.moodChoice === "thrill") ? "0.14" : "0.10";
-          }
-          scheduleNext(12000);
-          return;
-        }
-
-        if (s === STATES.DRAG){
-          footLeft.textContent = "Action : glisse le cœur dans le cadenas.";
-          startClock({soft:true, frozen:false});
-          timeline = buildTimeline(SCRIPT.DRAG_ACTION);
-          timeline.start();
-          dragZone.style.display = "flex";
-          lockTarget.classList.remove("hit");
-          initDragToLock();
-          return;
-        }
-
-        if (s === STATES.HOLD){
-          footLeft.textContent = "Moment unique.";
-          startClock({soft:true, frozen:true});
-          timeline = buildTimeline(SCRIPT.HOLD_GATE);
-          timeline.start();
-          holdWrap.style.display = "flex";
-          holdBtn.classList.add("pulse");
-          holdHint.classList.remove("show");
-          ringSet(0);
-          return;
-        }
-
-        if (s === STATES.TRUTH){
-          footLeft.textContent = "Juste la vérité.";
-          startClock({soft:true, frozen:false});
-          AudioEngine.setMode("soft");
-          timeline = buildTimeline(SCRIPT.TRUTH);
-          timeline.start();
-          scheduleNext(27000);
-          return;
-        }
-
-        if (s === STATES.QUESTION){
-          footLeft.textContent = "La question.";
-          startClock({soft:true, frozen:false});
-          timeline = buildTimeline(SCRIPT.QUESTION);
-          timeline.start();
-          setTimeout(() => {
-            showChoices([
-              { label:"Oui", cls:"primary", onClick: answerYes },
-              { label:"Oui, je le veux", cls:"soft", onClick: answerYes }
-            ]);
-          }, 5200);
-          return;
-        }
-
-        if (s === STATES.ENDING){
-          footLeft.textContent = "Fin du jeu.";
-          startClock({soft:true, frozen:false});
-
-          const now = new Date();
-          const stamp = formatStamp(now);
-
-          localStorage.setItem(STORAGE_KEY_DONE, "true");
-          localStorage.setItem(STORAGE_KEY_TIME, now.toISOString());
-          if (SESSION_ID) localStorage.setItem(STORAGE_KEY_SID_USED_PREFIX + SESSION_ID, "true");
-
-          setDot("good");
-          timeline = buildTimeline(SCRIPT.ENDING, { stamp });
-          timeline.start();
-
-          AudioEngine.chime();
-          heartsRain();
-
-          setTimeout(() => {
-            showChoices([{ label:"Recommencer", cls:"soft", onClick: hardReset }]);
-          }, 9800);
-
-          return;
-        }
+    // Auto-chain CLOCK -> PRESENCE -> FUTURE -> MOOD
+    // (on déclenche via NEXT timers dans enterState)
+    // + chain SOFT/THRILL intros via NEXT
+    (function patchAutoChains(){
+      const originalEnter = enterState;
+      enterState = function(s){
+        originalEnter(s);
+        if (s === STATES.SOFT_INTRO) scheduleNext(15000);
+        if (s === STATES.THRILL_INTRO) scheduleNext(15000);
       };
     })();
 
-    // Replace enterState with the corrected one
-    enterState = _enterState;
+    // When intro ends, go to decision
+    (function patchIntroToDecision(){
+      const originalDispatch = dispatch;
+      dispatch = function(evt){
+        // intercepter NEXT sur intro
+        if (state === STATES.SOFT_INTRO && evt.type === "NEXT"){
+          fadeCut(()=>transitionTo(STATES.SOFT_DECISION));
+          return;
+        }
+        if (state === STATES.THRILL_INTRO && evt.type === "NEXT"){
+          fadeCut(()=>transitionTo(STATES.THRILL_DECISION));
+          return;
+        }
+        originalDispatch(evt);
+      };
+    })();
 
-    // Ensure BOOT to CLOCK start works
-    function dispatch(evt){
-      switch(state){
-        case STATES.BOOT:
-          if (evt.type==="START"){ fadeCut(()=>transitionTo(STATES.CLOCK)); }
-          break;
-        case STATES.CLOCK:
-          if (evt.type==="OPEN_CHOICE"){ fadeCut(()=>transitionTo(STATES.AFTER_OPEN)); scheduleNext(0); }
-          break;
-        case STATES.AFTER_OPEN:
-          if (evt.type==="NEXT"){ fadeCut(()=>transitionTo(STATES.HEARTS)); }
-          break;
-        case STATES.HEARTS:
-          if (evt.type==="HEARTS_DONE"){ fadeCut(()=>transitionTo(STATES.MOOD)); }
-          break;
-        case STATES.MOOD:
-          if (evt.type==="MOOD_CHOICE"){ fadeCut(()=>transitionTo(STATES.PATH)); scheduleNext(0); }
-          break;
-        case STATES.PATH:
-          if (evt.type==="NEXT"){ fadeCut(()=>transitionTo(STATES.DRAG)); }
-          break;
-        case STATES.DRAG:
-          if (evt.type==="DRAG_DONE"){ fadeCut(()=>transitionTo(STATES.HOLD)); }
-          break;
-        case STATES.HOLD:
-          if (evt.type==="HOLD_SUCCESS"){ fadeCut(()=>transitionTo(STATES.TRUTH)); }
-          if (evt.type==="HOLD_CANCEL"){ holdHint.classList.add("show"); }
-          break;
-        case STATES.TRUTH:
-          if (evt.type==="NEXT"){ fadeCut(()=>transitionTo(STATES.QUESTION)); }
-          break;
-        case STATES.QUESTION:
-          if (evt.type==="ANSWER_YES"){ fadeCut(()=>transitionTo(STATES.ENDING)); }
-          break;
-        case STATES.ENDING:
-          if (evt.type==="RESET"){ hardReset(); }
-          break;
-      }
-    }
-
+    setTimeout(init, 20);
   </script>
 </body>
 </html>
